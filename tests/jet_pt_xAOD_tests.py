@@ -27,10 +27,10 @@ def test_retrieve_simple_jet_pts():
 	
 #test the same thing, but using func_adl:
 def test_func_adl_simple_jet_pts():
-   	query = EventDataset('localds://mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00') \ 
+	query = EventDataset('localds://mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00') \
 	.SelectMany('lambda e: (e.Jets("AntiKt4EMTopoJets"))') \
 	.Select('lambda j: (j.pt())') \
-	.asPandasDF("JetPt") \
+	.AsPandasDF("JetPt") \
 	.value(executor = lambda a: use_exe_servicex(a, endpoint='http://localhost:5000/servicex'))
 	r = servicex.get_data(query, dataset, "http://localhost:5000/servicex")
 	assert len(r.index) == 11355980
