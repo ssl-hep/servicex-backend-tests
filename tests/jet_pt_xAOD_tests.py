@@ -32,8 +32,7 @@ def test_func_adl_simple_jet_pts():
 	.Select('lambda j: (j.pt())') \
 	.AsPandasDF("JetPt") \
 	.value(executor = lambda a: use_exe_servicex(a, endpoint='http://localhost:5000/servicex'))
-	r = servicex.get_data(query, dataset, "http://localhost:5000/servicex")
-	assert len(r.index) == 11355980
+	assert len(query.index) == 11355980
 	
 #test if we can retrieve the electron four-vectors from this particular data set, and that we get back the correct number of lines.
 def test_retrieve_lepton_data():
