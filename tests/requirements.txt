@@ -2,3 +2,5 @@ servicex
 func-adl
 func-adl-xaod
 func-adl-uproot
+pytest
+pytest-regressions
