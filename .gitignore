@@ -1,3 +1,3 @@
-.ipynb_checkpoints
-__pycache__
-.ipytest_cache
+.ipynb_checkpoints/
+__pycache__/
+.ipytest_cache/
