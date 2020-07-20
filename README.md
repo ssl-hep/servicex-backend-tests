@@ -2,7 +2,7 @@
 
 These are tests for the backends of IRIS-HEP's ServiceX. The intended functionality is to ensure that the xAOD and uproot transformers both correctly provide the same data.
 
-# Requirements
+# Installation and Execution
 
 All the tests require local working versions of ServiceX with both the xAOD and the uproot backends. Starting from a clean installation of ServiceX, first set up a virtual environment with Python 3.
 
@@ -28,7 +28,3 @@ pytest test-script-name.py
 ```
 
 When finished, we can deactivate our virtual environment with `deactivate`.
-
-# Execution
-
-Navigate to the tests directory and use the command ``pytest`` to execute any of the desired tests.
