@@ -11,6 +11,7 @@ from func_adl_xAOD import ServiceXDatasetSource
 import uproot_methods
 from numpy import genfromtxt
 import math
+import asyncio
 
 # test if we can retrieve the Pts from this particular data set, and that we get back the correct number of lines.
 def test_retrieve_simple_jet_pts():
@@ -58,21 +59,33 @@ def test_retrieve_lepton_data():
 
 def test_lambda_capture():
     dataset = ServiceXDataset("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00")
-    jets = ServiceXDatasetSource(dataset) \
-        .Select('lambda e: e.Jets("AntiKt4EMTopoJets")') \
-        .Select('lambda j: (j.pt(), \
-                            j.eta(), \
-                            j.phi())') \
-        .AsPandasDF("JetPt", "JetEta", "JetPhi") \
-        .value()
 
-    electrons = ServiceXDatasetSource(dataset) \
-        .Select('lambda e: e.Electrons("Electrons")') \
-        .Select('lambda e: (e.pt(), \
-                            e.eta(), \
-                            e.phi())') \
-        .AsPandasDF("ElePt", "EleEta", "ElePhi") \
-        .value()
+    async def retrieve_jet_data(dataset):
+        jets = ServiceXDatasetSource(dataset) \
+            .Select('lambda e: e.Jets("AntiKt4EMTopoJets")') \
+            .Select('lambda j: (j.Select(lambda jet: jet.pt()), \
+                                j.Select(lambda jet: jet.eta()), \
+                                j.Select(lambda jet: jet.phi()))') \
+            .AsPandasDF(("JetPt", "JetEta", "JetPhi")) \
+            .value_async()
+
+        return await jets
+
+    async def retrieve_ele_data(dataset):
+        electrons = ServiceXDatasetSource(dataset) \
+            .Select('lambda e: e.Electrons("Electrons")') \
+            .Select('lambda e: (e.Select(lambda ele: ele.pt()), \
+                                e.Select(lambda ele: ele.eta()), \
+                                e.Select(lambda ele: ele.phi()))') \
+            .AsPandasDF(("ElePt", "EleEta", "ElePhi")) \
+            .value_async()
+
+        return await electrons
+
+    loop = asyncio.get_event_loop()
+    jets = loop.run_until_complete(retrieve_jet_data(dataset))
+    electrons = loop.run_until_complete(retrieve_ele_data(dataset))
+    loop.close()
 
     jetr = abs(math.sqrt(jets.JetEta**2 + jets.JetPhi**2))
     eler = abs(math.sqrt(electrons.EleEta**2 + electrons.ElePhi**2))
