@@ -1,5 +1,5 @@
 # This script checks if a query using ServiceX is actually returning data correctly.
-# Requires that ServiceX be running with appropriate port-forward commands on ports 5000 and 9000 for ServixeX and Minio.
+# Requires that ServiceX be running with appropriate port-forward commands on ports 5000 and 9000 for ServiceX and Minio.
 # Written by David Liu at the University of Washington, Seattle.
 # 29 June 2020
 
@@ -10,6 +10,7 @@ from servicex.servicex_adaptor import ServiceXAdaptor
 from func_adl_xAOD import ServiceXDatasetSource
 import uproot_methods
 from numpy import genfromtxt
+import math
 
 # test if we can retrieve the Pts from this particular data set, and that we get back the correct number of lines.
 def test_retrieve_simple_jet_pts():
@@ -28,10 +29,10 @@ def test_func_adl_simple_jet_pts():
         .AsPandasDF("JetPt") \
         .value()
 
-    npquery = query.JetPt
-    npquery = npquery.to_numpy()
-    oldquery = genfromtxt('data.csv', delimiter=',')
-    assert npquery.all() == oldquery.all()
+    retrieved_data = query.JetPt
+    retrieved_data = retrieved_data.to_numpy()
+    correct_data = genfromtxt('data.csv', delimiter=',')
+    assert retrieved_data.all() == correct_data.all()
 
 # test if we can retrieve the electron four-vectors from this particular data set, and that we get back the correct number of lines.
 def test_retrieve_lepton_data():
@@ -55,14 +56,38 @@ def test_retrieve_lepton_data():
 
     assert len(dielectrons.mass) == 1502958
 
-# test the capacity of ServiceX with very large datasets
-#def test_servicex_stress_capacity():
-#	dataset = ServiceXDataset('data17_13TeV.periodK.physics_Main.PhysCont.DAOD_STDM7.grp23_v01_p4030', MaxWorkers = 100)
-#    query = ServiceXDatasetSource(dataset) \
-#        .SelectMany('lambda e: (e.Jets("AntiKt4EMTopoJets"))') \
-#        .Where('lambda j: (j.pt()/1000)>30') \
-#        .Select('lambda j: (j.pt())') \
-#        .AsPandasDF("JetPt") \
-#        .value()
+def test_lambda_capture():
+    dataset = ServiceXDataset("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00")
+    jets = ServiceXDatasetSource(dataset) \
+        .Select('lambda e: e.Jets("AntiKt4EMTopoJets")') \
+        .Select('lambda j: (j.pt(), \
+                            j.eta(), \
+                            j.phi())') \
+        .AsPandasDF("JetPt", "JetEta", "JetPhi") \
+        .value()
 
-	
+    electrons = ServiceXDatasetSource(dataset) \
+        .Select('lambda e: e.Electrons("Electrons")') \
+        .Select('lambda e: (e.pt(), \
+                            e.eta(), \
+                            e.phi())') \
+        .AsPandasDF("ElePt", "EleEta", "ElePhi") \
+        .value()
+
+    jetr = abs(math.sqrt(jets.JetEta**2 + jets.JetPhi**2))
+    eler = abs(math.sqrt(electrons.EleEta**2 + electrons.ElePhi**2))
+
+    for electron in eler:
+        event_counter = 0
+        electrons_within_tolerance = []
+        for jet in jetr:
+            if abs(jet - electron) <= 1.0:
+                electrons_within_tolerance.append(event_counter)
+        event_counter += 1
+    
+    final_list = []
+
+    for i in range(len(electrons_within_tolerance)):
+        final_list.append(electrons.ElePt[electrons_within_tolerance[i]])
+
+    assert final_list == final_list
