@@ -32,7 +32,7 @@ def test_func_adl_simple_jet_pts():
 
     retrieved_data = query.JetPt
     retrieved_data = retrieved_data.to_numpy()
-    correct_data = genfromtxt('data.csv', delimiter=',')
+    correct_data = genfromtxt('tests/data.csv', delimiter=',')
     assert retrieved_data.all() == correct_data.all()
 
 # test if we can retrieve the electron four-vectors from this particular data set, and that we get back the correct number of lines.
