@@ -12,6 +12,7 @@ import uproot_methods
 from numpy import genfromtxt
 import math
 import asyncio
+import pytest
 
 # test if we can retrieve the Pts from this particular data set, and that we get back the correct number of lines.
 def test_retrieve_simple_jet_pts():
@@ -57,7 +58,9 @@ def test_retrieve_lepton_data():
 
     assert len(dielectrons.mass) == 1502958
 
-def test_lambda_capture():
+# test if we can retrieve electrons that are within a certain pseudorapidity allowance of a jet
+@pytest.mark.asyncio
+async def test_lambda_capture():
     dataset = ServiceXDataset("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00")
 
     async def retrieve_jet_data(dataset):
@@ -66,7 +69,7 @@ def test_lambda_capture():
             .Select('lambda j: (j.Select(lambda jet: jet.pt()), \
                                 j.Select(lambda jet: jet.eta()), \
                                 j.Select(lambda jet: jet.phi()))') \
-            .AsPandasDF(("JetPt", "JetEta", "JetPhi")) \
+            .AsAwkwardArray(("JetPt", "JetEta", "JetPhi")) \
             .value_async()
 
         return await jets
@@ -77,18 +80,17 @@ def test_lambda_capture():
             .Select('lambda e: (e.Select(lambda ele: ele.pt()), \
                                 e.Select(lambda ele: ele.eta()), \
                                 e.Select(lambda ele: ele.phi()))') \
-            .AsPandasDF(("ElePt", "EleEta", "ElePhi")) \
+            .AsAwkwardArray(("ElePt", "EleEta", "ElePhi")) \
             .value_async()
 
         return await electrons
 
-    loop = asyncio.get_event_loop()
-    jets = loop.run_until_complete(retrieve_jet_data(dataset))
-    electrons = loop.run_until_complete(retrieve_ele_data(dataset))
-    loop.close()
+    jets = retrieve_jet_data(dataset)
+    electrons = retrieve_ele_data(dataset)
+    all_wait =  await asyncio.gather(jets, electrons)
 
-    jetr = abs(math.sqrt(jets.JetEta**2 + jets.JetPhi**2))
-    eler = abs(math.sqrt(electrons.EleEta**2 + electrons.ElePhi**2))
+    jetr = abs(math.sqrt(jets[b'JetEta']**2 + jets[b'JetPhi']**2))
+    eler = abs(math.sqrt(electrons[b'EleEta']**2 + electrons[b'ElePhi']**2))
 
     for electron in eler:
         event_counter = 0

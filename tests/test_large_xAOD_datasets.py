@@ -12,11 +12,13 @@ from func_adl_xAOD import ServiceXDatasetSource
 import uproot_methods
 from numpy import genfromtxt
 import time
+import pytest
+
+pytestmark = run_stress_tests # stress tests take upwards of 40 minutes to complete, so we don't do them unless we want to.
 
 # this function tests the ability of ServiceX to pull one column of data from a 10 TB dataset
 def test_servicex_10TB_capacity():
     dataset = ServiceXDataset('data17_13TeV:data17_13TeV.periodK.physics_Main.PhysCont.DAOD_STDM7.grp23_v01_p4030', max_workers = 400) # define which dataset we want
-    t0 = time.process_time() # start stopwatch
 
     # here, we build the relevant query and send it to ServiceX. Refer to https://github.com/iris-hep/func_adl/blob/master/documentation.md for how to build the query.
     query = ServiceXDatasetSource(dataset) \
@@ -234,16 +236,14 @@ def test_servicex_10TB_capacity():
                          "PhotonRapidity")) \
         .value()
 
-    t1 = time.process_time() # end stopwatch
     retrieved_data = query.JetPt # store the JetPts as a list
     
     retrieved_data = retrieved_data.to_numpy() # convert to a numpy list
     correct_data = genfromtxt('large_data.csv', delimiter=',') # retrieve the true values as a numpy list
-#    assert retrieved_data == correct_data # the data Sx pulled should be identical to the true values
+    assert retrieved_data == correct_data # the data Sx pulled should be identical to the true values
 	
-    delta_t = t1 - t0 # figure out how long it took
-    assert delta_t <= 1800.0 # in seconds, we prefer that a 10 TB data query take less than 30 minutes
 
+@pytest.mark.asyncio
 async def test_multiple_requests():
     dataset = [ServiceXDataset('scope: dataset_name'), \
                ServiceXDataset('scope: dataset_name'), \
@@ -303,22 +303,21 @@ async def test_multiple_requests():
 
         return await query
 
-    loop = asyncio.get_event_loop()
-    t0 = time.process_time() #start stopwatch
-    retrieved_data = loop.run_until_complete(asyncio.gather(fetch_data(dataset[0]), \
-                                                            fetch_data(dataset[1]), \
-                                                            fetch_data(dataset[2]), \
-                                                            fetch_data(dataset[3]), \
-                                                            fetch_data(dataset[4]), \
-                                                            fetch_data(dataset[5]), \
-                                                            fetch_data(dataset[6]), \
-                                                            fetch_data(dataset[7]), \
-                                                            fetch_data(dataset[8]), \
-                                                            fetch_data(dataset[9])))
-    loop.close()
-    t1 = time.process_time() # end stopwatch
-    delta_t = t1 - t0 # time elapsed
-#    assert delta_t <= 600.0 # in seconds, we prefer this query take less than 10 minutes
+    data_list = []
+    for i in range(10):
+        data_slot = fetch_data(dataset[i])
+        data_list.append(data_slot)
+
+    retrieved_data = await asyncio.gather(data_list[0], \
+                                          data_list[1], \
+                                          data_list[2], \
+                                          data_list[3], \
+                                          data_list[4], \
+                                          data_list[5], \
+                                          data_list[6], \
+                                          data_list[7], \
+                                          data_list[8], \
+                                          data_list[9])
 
     retrieved_data = retrieved_data.JetPt
     retrieved_data = retrieved_data.to_numpy()
