@@ -14,6 +14,8 @@ from numpy import genfromtxt
 import time
 import pytest
 
+from control_tests import run_stress_tests
+
 pytestmark = run_stress_tests # stress tests take upwards of 40 minutes to complete, so we don't do them unless we want to.
 
 # this function tests the ability of ServiceX to pull one column of data from a 10 TB dataset
@@ -23,7 +25,7 @@ def test_servicex_10TB_capacity():
     # here, we build the relevant query and send it to ServiceX. Refer to https://github.com/iris-hep/func_adl/blob/master/documentation.md for how to build the query.
     query = ServiceXDatasetSource(dataset) \
         .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), \
-                            e.TrackJets("AntiKt4PV0TrackJets"), \
+                            e.Tracks("AntiKt4PV0TrackJets"), \
                             e.BTopo("BTagging_AntiKT4EMTopo.index"), \
                             e.BTrack("BTagging_AntiKt4Track"), \
                             e.Clusters("CaloCalTopoClusters"), \

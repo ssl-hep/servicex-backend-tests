@@ -87,7 +87,7 @@ async def test_lambda_capture():
 
     jets = retrieve_jet_data(dataset)
     electrons = retrieve_ele_data(dataset)
-    all_wait =  await asyncio.gather(jets, electrons)
+    await asyncio.gather(jets, electrons)
 
     jetr = abs(math.sqrt(jets[b'JetEta']**2 + jets[b'JetPhi']**2))
     eler = abs(math.sqrt(electrons[b'EleEta']**2 + electrons[b'ElePhi']**2))
