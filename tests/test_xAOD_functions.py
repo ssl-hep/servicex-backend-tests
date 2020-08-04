@@ -65,7 +65,7 @@ async def test_lambda_capture():
 
     async def retrieve_jet_data(dataset):
         jets = ServiceXDatasetSource(dataset) \
-            .Select('lambda e: e.Jets("AntiKt4EMTopoJets")') \
+            .Select('lambda e: e.Jets("AntiKt4EMTopoJets").Where(lambda jet: jet.pt()/1000>60)') \
             .Select('lambda j: (j.Select(lambda jet: jet.pt()), \
                                 j.Select(lambda jet: jet.eta()), \
                                 j.Select(lambda jet: jet.phi()))') \
@@ -85,16 +85,14 @@ async def test_lambda_capture():
 
         return await electrons
 
-    jets = retrieve_jet_data(dataset)
-    electrons = retrieve_ele_data(dataset)
-    await asyncio.gather(jets, electrons)
+    data_jet, data_ele = await asyncio.gather(retrieve_jet_data(dataset), retrieve_ele_data(dataset))
 
-    jetr = abs(math.sqrt(jets[b'JetEta']**2 + jets[b'JetPhi']**2))
-    eler = abs(math.sqrt(electrons[b'EleEta']**2 + electrons[b'ElePhi']**2))
+    jetr = np.sqrt(data_jet[b'JetEta']**2 + data_jet[b'JetPhi']**2)
+    eler = np.sqrt(data_ele[b'EleEta']**2 + data_ele[b'EleEta']**2)
 
+    electrons_within_tolerance = []
     for electron in eler:
         event_counter = 0
-        electrons_within_tolerance = []
         for jet in jetr:
             if abs(jet - electron) <= 1.0:
                 electrons_within_tolerance.append(event_counter)
@@ -103,6 +101,6 @@ async def test_lambda_capture():
     final_list = []
 
     for i in range(len(electrons_within_tolerance)):
-        final_list.append(electrons.ElePt[electrons_within_tolerance[i]])
-
+        final_list.append(data_ele[b'ElePt'][electrons_within_tolerance[i]])
+        
     assert final_list == final_list
