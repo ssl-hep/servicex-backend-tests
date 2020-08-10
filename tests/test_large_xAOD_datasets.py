@@ -16,11 +16,11 @@ import pytest
 
 from control_tests import run_stress_tests
 
-pytestmark = run_stress_tests # stress tests take upwards of 40 minutes to complete, so we don't do them unless we want to.
+# pytestmark = run_stress_tests # stress tests take upwards of 40 minutes to complete, so we don't do them unless we want to.
 
 # this function tests the ability of ServiceX to pull one column of data from a 10 TB dataset
 def test_servicex_10TB_capacity():
-    dataset = ServiceXDataset('data17_13TeV:data17_13TeV.periodK.physics_Main.PhysCont.DAOD_STDM7.grp23_v01_p4030', max_workers = 400) # define which dataset we want
+    dataset = ServiceXDataset('data15_13TeV:data15_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ1.grp15_v01_p4173', max_workers = 400) # define which dataset we want
 
     # here, we build the relevant query and send it to ServiceX. Refer to https://github.com/iris-hep/func_adl/blob/master/documentation.md for how to build the query.
     query = ServiceXDatasetSource(dataset) \
@@ -238,29 +238,28 @@ def test_servicex_10TB_capacity():
                          "PhotonRapidity")) \
         .value()
 
-    retrieved_data = query.JetPt # store the JetPts as a list
-    
-    retrieved_data = retrieved_data.to_numpy() # convert to a numpy list
-    correct_data = genfromtxt('large_data.csv', delimiter=',') # retrieve the true values as a numpy list
-    assert retrieved_data == correct_data # the data Sx pulled should be identical to the true values
-	
+    retrieved_data = query[b'JetPt'] # store the JetPts as a list
 
+    assert len(retrieved_data) = 5000 # did we retrieve the correct number of JetPts?
+	
+# This test retrieves 20 columns from 10 datasets at the same time. This takes a lot of memory!
 @pytest.mark.asyncio
 async def test_multiple_requests():
-    dataset = [ServiceXDataset('scope: dataset_name'), \
-               ServiceXDataset('scope: dataset_name'), \
-               ServiceXDataset('scope: dataset_name'), \
-               ServiceXDataset('scope: dataset_name'), \
-               ServiceXDataset('scope: dataset_name'), \
-               ServiceXDataset('scope: dataset_name'), \
-               ServiceXDataset('scope: dataset_name'), \
-               ServiceXDataset('scope: dataset_name'), \
-               ServiceXDataset('scope: dataset_name'), \
-               ServiceXDataset('scope: dataset_name')
-    ]
+    dataset = [ServiceXDataset('mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00'), \
+               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_SUSY18.e3649_e5984_s3126_r10201_r10210_p3840_tid18281770_00'), \
+               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r10724_r10726_p4180_tid21859882_00'), \
+               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r10724_r10726_p4180_tid21859885_00'), \
+               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r9364_r9315_p4180_tid21859934_00'), \
+               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_s3126_r10201_r10210_p4180_tid21860366_00'), \
+               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT12.e3649_e5984_s3126_r10724_r10726_p3978_tid19368338_00'), \
+               ServiceXDataset('mc16_13TeV:mc16_13TeV.301001.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_180M250.deriv.DAOD_EXOT19.e3649_e5984_s3126_r10724_r10726_p3978_tid19509568_00'), \
+               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT12.e3649_e5984_s3126_r9364_r9315_p3978_tid19370588_00'), \
+               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT19.e3649_e5984_s3126_r10724_r10726_p3978_tid19511379_00') \
+               ]
+
     async def fetch_data(dataset):
         query = ServiceXDatasetSource(dataset) \
-            .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), e.Electrons("Electrons")') \
+            .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), e.Electrons("Electrons"))') \
             .Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
                                  ls[0].Select(lambda jet: jet.eta()), \
                                  ls[0].Select(lambda jet: jet.index()), \
@@ -276,11 +275,11 @@ async def test_multiple_requests():
                                  ls[1].Select(lambda ele: ele.eta()), \
                                  ls[1].Select(lambda ele: ele.index()), \
                                  ls[1].Select(lambda ele: ele.m()), \
+                                 ls[1].Select(lambda ele: ele.nCaloClusters()), \
+                                 ls[1].Select(lambda ele: ele.nTrackParticles()), \
                                  ls[1].Select(lambda ele: ele.phi()), \
                                  ls[1].Select(lambda ele: ele.pt()), \
-                                 ls[1].Select(lambda ele: ele.qOverp()), \
-                                 ls[1].Select(lambda ele: ele.rapidity()), \
-                                 ls[1].Select(lambda ele: ele.theta()))') \
+                                 ls[1].Select(lambda ele: ele.rapidity()))') \
             .AsAwkwardArray(("JetE", \
                              "JetEta", \
                              "JetIndex", \
@@ -310,18 +309,22 @@ async def test_multiple_requests():
         data_slot = fetch_data(dataset[i])
         data_list.append(data_slot)
 
-    retrieved_data = await asyncio.gather(data_list[0], \
-                                          data_list[1], \
-                                          data_list[2], \
-                                          data_list[3], \
-                                          data_list[4], \
-                                          data_list[5], \
-                                          data_list[6], \
-                                          data_list[7], \
-                                          data_list[8], \
-                                          data_list[9])
+    ds0, ds1, ds2, ds3, ds4, ds5, ds6, ds7, ds8, ds9 = await asyncio.gather(data_list[0], \
+                                                            data_list[1], \
+                                                            data_list[2], \
+                                                            data_list[3], \
+                                                            data_list[4], \
+                                                            data_list[5], \
+                                                            data_list[6], \
+                                                            data_list[7], \
+                                                            data_list[8], \
+                                                            data_list[9])
 
-    retrieved_data = retrieved_data.JetPt
-    retrieved_data = retrieved_data.to_numpy()
-    true_data = genfromtxt('partial_datasets.csv', delimiter=',')
-    assert retrieved_data == true_data
+    total_length = len(ds0[b'JetPt']) + len(ds1[b'JetPt']) + \
+                   len(ds2[b'JetPt']) + len(ds3[b'JetPt']) + \
+                   len(ds4[b'JetPt']) + len(ds5[b'JetPt']) + \
+                   len(ds6[b'JetPt']) + len(ds7[b'JetPt']) + \
+                   len(ds8[b'JetPt']) + len(ds9[b'JetPt'])
+
+# did we pull the correct amount of data from all 10 datasets?
+    assert total_length = 10264173
