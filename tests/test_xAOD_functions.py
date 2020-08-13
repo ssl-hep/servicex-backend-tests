@@ -13,6 +13,13 @@ from numpy import genfromtxt
 import math
 import asyncio
 import pytest
+import logging
+
+@pytest.fixture(autouse=True)
+def turn_on_logging():
+    logging.basicConfig(level=logging.DEBUG)
+    yield None
+    logging.basicConfig(level=logging.WARNING)
 
 # test if we can retrieve the Pts from this particular data set, and that we get back the correct number of lines.
 def test_retrieve_simple_jet_pts():

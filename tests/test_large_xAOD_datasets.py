@@ -20,7 +20,7 @@ from control_tests import run_stress_tests
 
 # this function tests the ability of ServiceX to pull one column of data from a 10 TB dataset
 def test_servicex_10TB_capacity():
-    dataset = ServiceXDataset('data15_13TeV:data15_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ1.grp15_v01_p4173', max_workers = 400) # define which dataset we want
+    dataset = ServiceXDataset('data16_13TeV:data16_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ5.grp16_v01_p4173', max_workers = 400) # define which dataset we want
 
     # here, we build the relevant query and send it to ServiceX. Refer to https://github.com/iris-hep/func_adl/blob/master/documentation.md for how to build the query.
     query = ServiceXDatasetSource(dataset) \
@@ -134,7 +134,7 @@ def test_servicex_10TB_capacity():
                              ls[9].Select(lambda ptn: ptn.nVertices()), \
                              ls[9].Select(lambda ptn: ptn.phi()), \
                              ls[9].Select(lambda ptn: ptn.pt()), \
-                             ls[9].Select(lambda ptn: ptn.rapidity())') \
+                             ls[9].Select(lambda ptn: ptn.rapidity()))') \
         .AsAwkwardArray(("JetE", \
                          "JetEta", \
                          "JetIndex", \
@@ -240,7 +240,7 @@ def test_servicex_10TB_capacity():
 
     retrieved_data = query[b'JetPt'] # store the JetPts as a list
 
-    assert len(retrieved_data) = 5000 # did we retrieve the correct number of JetPts?
+    assert len(retrieved_data) == 5000 # did we retrieve the correct number of JetPts?
 	
 # This test retrieves 20 columns from 10 datasets at the same time. This takes a lot of memory!
 @pytest.mark.asyncio
@@ -327,4 +327,4 @@ async def test_multiple_requests():
                    len(ds8[b'JetPt']) + len(ds9[b'JetPt'])
 
 # did we pull the correct amount of data from all 10 datasets?
-    assert total_length = 10264173
+    assert total_length == 10264173
