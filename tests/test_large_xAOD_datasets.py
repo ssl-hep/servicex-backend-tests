@@ -11,6 +11,7 @@ from servicex.servicex_adaptor import ServiceXAdaptor
 from func_adl_xAOD import ServiceXDatasetSource
 import uproot_methods
 from numpy import genfromtxt
+import numpy as np
 import time
 import pytest
 
