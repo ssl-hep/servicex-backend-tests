@@ -1,7 +1,5 @@
 FROM python:3.7
 
-RUN useradd -ms /bin/bash servicex
-
 WORKDIR /home/servicex-backend-tests
 
 COPY requirements.txt requirements.txt
