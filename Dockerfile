@@ -19,4 +19,4 @@ RUN printf "\n" > ./.servicex
 RUN printf "password: " > ./.servicex
 RUN printf $sx_password > ./.servicex
 
-COPY copy tests ./tests
+COPY tests ./tests
