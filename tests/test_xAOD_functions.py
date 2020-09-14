@@ -7,7 +7,7 @@ import servicex
 from servicex import ServiceXDataset
 from servicex.minio_adaptor import MinioAdaptor
 from servicex.servicex_adaptor import ServiceXAdaptor
-from func_adl_xAOD import ServiceXDatasetSource
+from func_adl_servicex import ServiceXDatasetSource
 import uproot_methods
 from numpy import genfromtxt
 import numpy as np

@@ -1,6 +1,3 @@
 servicex==2.0.0b8
-func-adl==1.1.0b7
-func-adl-xaod==1.1.0b4
-func-adl-xaod.backend==1.1.0b4
-func-adl-uproot
+func-adl-servicex
 pytest

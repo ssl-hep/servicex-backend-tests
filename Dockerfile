@@ -6,11 +6,8 @@ COPY requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt
 
-ARG user_name
-ARG pass_word
-
-ENV sx_username = $user_name
-ENV sx_password = $pass_word
+ENV sx_username = username
+ENV sx_password = password
 
 RUN printf "api_endpoint:\n" > ./.servicex
 RUN printf "email: " > ./.servicex
