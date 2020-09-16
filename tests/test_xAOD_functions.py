@@ -66,49 +66,30 @@ def test_retrieve_lepton_data():
 
     assert len(dielectrons.mass) == 1502958
 
-# test if we can retrieve electrons that are within a certain pseudorapidity allowance of a jet
-@pytest.mark.asyncio
-async def test_lambda_capture():
+# test if jet moments can be pulled properly
+def test_getAttributefloat_data():
+    dataset = ServiceXDataset("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00")
+    query = ServiceXDatasetSource(dataset) \
+        .SelectMany('lambda e: e.Jets("AntiKt4EMTopoJets")') \
+        .Where('lambda j: j.pt()/1000 > 20 and abs(j.eta()/1000) < 4.5') \
+        .Select('lambda j: j.getAttributeFloat("LArQuality")') \
+        .AsPandasDF("LArQuality") \
+        .value()
+    
+    assert len(query.LArQuality) == 3551964
+
+# test if lambda capture is working properly in func_adl
+def test_lambda_capture():
     dataset = ServiceXDataset("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00")
 
-    async def retrieve_jet_data(dataset):
+    def retrieve_jet_lambda(dataset):
         jets = ServiceXDatasetSource(dataset) \
-            .Select('lambda e: e.Jets("AntiKt4EMTopoJets").Where(lambda jet: jet.pt()/1000>60)') \
-            .Select('lambda j: (j.Select(lambda jet: jet.pt()), \
-                                j.Select(lambda jet: jet.eta()), \
-                                j.Select(lambda jet: jet.phi()))') \
-            .AsAwkwardArray(("JetPt", "JetEta", "JetPhi")) \
-            .value_async()
+            .Select('lambda e: (e.Jets("AntiKt4EMTopoJets").Where(lambda jet: jet.pt()/1000 > 60.0), e.Electrons("Electrons"))') \
+            .Select('lambda ls: ls[1].Select(lambda ele: ls[0].Select(lambda jet: jet.pt() + ele.pt()).Count())') \
+            .AsAwkwardArray(('JetPt')) \
+            .value()
 
-        return await jets
+        return jets
 
-    async def retrieve_ele_data(dataset):
-        electrons = ServiceXDatasetSource(dataset) \
-            .Select('lambda e: e.Electrons("Electrons")') \
-            .Select('lambda e: (e.Select(lambda ele: ele.pt()), \
-                                e.Select(lambda ele: ele.eta()), \
-                                e.Select(lambda ele: ele.phi()))') \
-            .AsAwkwardArray(("ElePt", "EleEta", "ElePhi")) \
-            .value_async()
-
-        return await electrons
-
-    data_jet, data_ele = await asyncio.gather(retrieve_jet_data(dataset), retrieve_ele_data(dataset))
-
-    jetr = np.sqrt(data_jet[b'JetEta']**2 + data_jet[b'JetPhi']**2)
-    eler = np.sqrt(data_ele[b'EleEta']**2 + data_ele[b'EleEta']**2)
-
-    electrons_within_tolerance = []
-    for electron in eler:
-        event_counter = 0
-        for jet in jetr:
-            if abs(jet - electron) <= 1.0:
-                electrons_within_tolerance.append(event_counter)
-        event_counter += 1
-    
-    final_list = []
-
-    for i in range(len(electrons_within_tolerance)):
-        final_list.append(data_ele[b'ElePt'][electrons_within_tolerance[i]])
-        
-    assert final_list == final_list
+    lambda_test = retrieve_jet_lambda(dataset)
+    assert len(lambda_test[b'JetPt']) == 1993800
