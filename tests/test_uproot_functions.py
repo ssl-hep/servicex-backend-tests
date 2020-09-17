@@ -7,18 +7,21 @@ import servicex
 from servicex import ServiceXDataset
 from func_adl_servicex import ServiceXDatasetSource
 import uproot_methods
+import pandas as pd
 from numpy import genfromtxt
 
 # test if we can retrieve the Pts from this particular data set, and that we get back the correct number of lines.
 def test_retrieve_simple_jet_pts_uproot():
 
-    dataset = "user.kchoi:user.kchoi.ttHML_80fb_ttbar"
+    dataset_uproot = "data15_13TeV:data15_13TeV.00282784.physics_Main.deriv.DAOD_PHYSLITE.r9264_p3083_p4165_tid21568807_00"
     uproot_transformer_image = "sslhep/servicex_func_adl_uproot_transformer:issue6"
 
-    sx_dataset = ServiceXDataset(dataset, image=uproot_transformer_image)
-    source = ServiceXDatasetSource(sx_dataset, "nominal")
-    data = source.Select("lambda e: {'lep_pt_1': e.lep_Pt_1}") \
+    sx_dataset = ServiceXDataset(dataset_uproot, image=uproot_transformer_image)
+    ds = ServiceXDatasetSource(sx_dataset, "CollectionTree")
+    data = ds.Select("lambda e: {'JetPT': e['AnalysisJetsAuxDyn.pt']}") \
         .AsParquetFiles('junk.parquet') \
         .value()
 
-    assert len(data.index) == 11355980
+    columnar_data = pd.read_parquet(data)
+
+    assert len(columnar_data.JetPT) == 4046640
