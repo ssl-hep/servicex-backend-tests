@@ -33,4 +33,4 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Execute tests
       run: |
-        ./execute_xAOD_tests.sh
+        ./execute_xAOD_tests.sh $EMAIL $PASSWORD
