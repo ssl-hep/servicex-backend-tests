@@ -15,11 +15,10 @@ import numpy as np
 import time
 import pytest
 
-from control_tests import run_stress_tests
-
 # pytestmark = run_stress_tests # stress tests take upwards of 40 minutes to complete, so we don't do them unless we want to.
 
 # this function tests the ability of ServiceX to pull one column of data from a 10 TB dataset
+@pytest.mark.stress
 def test_servicex_10TB_capacity():
     dataset = ServiceXDataset('data16_13TeV:data16_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ5.grp16_v01_p4173', max_workers = 400) # define which dataset we want
 
@@ -245,6 +244,7 @@ def test_servicex_10TB_capacity():
 	
 # This test retrieves 20 columns from 10 datasets at the same time. This takes a lot of memory!
 @pytest.mark.asyncio
+@pytest.mark.stress
 async def test_multiple_requests():
     dataset = [ServiceXDataset('mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_SUSY18.e3649_e5984_s3126_r10201_r10210_p3840_tid18281770_00'), \
