@@ -6,7 +6,7 @@ name: Python package
 on:
   push:
   schedule:
-    - cron: 0 13 * * 1 # we run every Monday at 1300 UTC / 0800 EST / 0500 PST
+    - cron: 0 10 * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
 
 jobs:
   build:
@@ -27,9 +27,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Execute tests
+    - name: Execute xAOD tests
       env:
-        EMAIL: ${{ secrets.SECRET_USERNAME }}
-        PASSWORD: ${{ secrets.SECRET_PASSWORD }}
+        XAOD_EMAIL: ${{ secrets.SECRET_USERNAME }}
+        XAOD_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
       run: |
-        ./execute_xAOD_tests.sh $EMAIL $PASSWORD
+        ./test_xaod.sh $XAOD_EMAIL $XAOD_PASSWORD
+    - name: Execute Uproot tests
+      env:
+        UR_EMAIL: ${{ secrets.SECRET_USERNAME }}
+        UR_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
+      run: |
+        ./test_uproot.sh $UR_EMAIL $UR_PASSWORD
