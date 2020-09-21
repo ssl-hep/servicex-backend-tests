@@ -17,7 +17,7 @@ import pytest
 
 # pytestmark = run_stress_tests # stress tests take upwards of 40 minutes to complete, so we don't do them unless we want to.
 
-# this function tests the ability of ServiceX to pull one column of data from a 10 TB dataset
+# this function tests the ability of ServiceX to pull one hundred column of data from a 10 TB dataset
 @pytest.mark.stress
 def test_servicex_10TB_capacity():
     dataset = ServiceXDataset('data16_13TeV:data16_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ5.grp16_v01_p4173', max_workers = 400) # define which dataset we want

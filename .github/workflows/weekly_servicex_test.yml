@@ -4,6 +4,7 @@
 name: Python package
 
 on:
+  push:
   schedule:
     - cron: 0 13 * * 1 # we run every Monday at 1300 UTC / 0800 EST / 0500 PST
 
@@ -17,11 +18,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Secrets
-      run:
-      env:
-        EMAIL: ${{ secrets.SECRET_USERNAME }}
-        PASSWORD: ${{ secrets.SECRET_PASSWORD }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -32,5 +28,8 @@ jobs:
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Execute tests
+      env:
+        EMAIL: ${{ secrets.SECRET_USERNAME }}
+        PASSWORD: ${{ secrets.SECRET_PASSWORD }}
       run: |
         ./execute_xAOD_tests.sh $EMAIL $PASSWORD

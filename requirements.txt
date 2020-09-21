@@ -1,4 +1,4 @@
-servicex==2.0.0b8
+servicex==2.0
 func-adl-servicex
 pytest
 pytest-asyncio
