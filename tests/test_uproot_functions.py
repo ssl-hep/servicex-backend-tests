@@ -25,3 +25,12 @@ def test_retrieve_simple_jet_pts_uproot():
     columnar_data = pd.read_parquet(data)
 
     assert len(columnar_data.JetPT) == 4046640
+
+# test if lambda capture is functional for uproot backend
+def test_lambda_capture():
+    dataset_uproot = "data15_13TeV:data15_13TeV.00282784.physics_Main.deriv.DAOD_PHYSLITE.r9264_p3083_p4165_tid21568807_00"
+    uproot_transformer_image = "sslhep/servicex_func_adl_uproot_transformer:issue6"
+
+    sx_dataset = ServiceXDataset(dataset_uproot, image=uproot_transformer_image)
+    ds = ServiceXDatasetSource(sx_dataset, "CollectionTree")
+    data = ds.Select("lambda e: e.Select(lambda jet: {'JetPt': jet.pt})")

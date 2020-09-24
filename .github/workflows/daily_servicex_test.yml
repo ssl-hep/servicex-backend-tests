@@ -32,10 +32,10 @@ jobs:
         XAOD_EMAIL: ${{ secrets.SECRET_USERNAME }}
         XAOD_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
       run: |
-        ./test_xaod.sh $XAOD_EMAIL $XAOD_PASSWORD
+        source test_xaod.sh $XAOD_EMAIL $XAOD_PASSWORD
     - name: Execute Uproot tests
       env:
         UR_EMAIL: ${{ secrets.SECRET_USERNAME }}
         UR_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
       run: |
-        ./test_uproot.sh $UR_EMAIL $UR_PASSWORD
+        source test_uproot.sh $UR_EMAIL $UR_PASSWORD
