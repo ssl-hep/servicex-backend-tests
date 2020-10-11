@@ -29,13 +29,11 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Execute xAOD tests
       env:
-        XAOD_EMAIL: ${{ secrets.SECRET_USERNAME }}
-        XAOD_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
+        XAOD_TOKEN: ${{ secrets.SECRET_XAOD_TOKEN }}
       run: |
-        source test_xaod.sh $XAOD_EMAIL $XAOD_PASSWORD
+        source test_xaod.sh $XAOD_TOKEN 
     - name: Execute Uproot tests
       env:
-        UR_EMAIL: ${{ secrets.SECRET_USERNAME }}
-        UR_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
+        UR_TOKEN: ${{ secrets.SECRET_UPROOT_TOKEN }}
       run: |
-        source test_uproot.sh $UR_EMAIL $UR_PASSWORD
+        source test_uproot.sh $UR_TOKEN
