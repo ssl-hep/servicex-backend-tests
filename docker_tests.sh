@@ -9,7 +9,7 @@ if [[-z $4]];
 then
     if [[ $1 = 'uproot' ]] || [[ $1 = 'Uproot' ]];
     then
-        printf "api_endpoint:\n  endpoint: http://test1-uproot-servicex.uc.ssl-hep.org/\n  token: $2\n  type: uproot" > ./.servicex
+        printf "api_endpoint:\n  endpoint: http://uproot.servicex.ssl-hep.org/\n  token: $2\n  type: uproot" > ./.servicex
         pytest tests/test_uproot_functions.py
         rm ./.servicex
     elif [[ $1 = 'xaod' ]] || [[ $1 = 'xAOD' ]];
