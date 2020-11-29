@@ -8,7 +8,7 @@ import servicex
 from servicex import ServiceXDataset
 from servicex.minio_adaptor import MinioAdaptor
 from servicex.servicex_adaptor import ServiceXAdaptor
-from func_adl_servicex import ServiceXDatasetSource
+from func_adl_servicex import ServiceXSourceXAOD
 import uproot_methods
 from numpy import genfromtxt
 import numpy as np
@@ -23,7 +23,7 @@ def test_servicex_10TB_capacity():
     dataset = ServiceXDataset('data16_13TeV:data16_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ5.grp16_v01_p4173', max_workers = 400) # define which dataset we want
 
     # here, we build the relevant query and send it to ServiceX. Refer to https://github.com/iris-hep/func_adl/blob/master/documentation.md for how to build the query.
-    query = ServiceXDatasetSource(dataset) \
+    query = ServiceXSourceXAOD(dataset) \
         .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), \
                             e.Tracks("AntiKt4PV0TrackJets"), \
                             e.BTopo("BTagging_AntiKT4EMTopo.index"), \
