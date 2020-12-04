@@ -4,6 +4,28 @@ These are tests for the backends of IRIS-HEP's ServiceX. The intended functional
 
 # Installation and Execution
 
+## Docker
+
+Pull the tests using docker commands:
+
+```
+docker pull docker pull davidwliu/servicex-backend-tests:v-desired
+```
+
+Replace the version tag with the desired version from: https://hub.docker.com/r/davidwliu/servicex-backend-tests
+
+Afterwards, run the image. This command takes two arguments:
+
+```
+docker run davidwliu/servicex-backend-tests:v2 TEST_TYPE TOKEN
+```
+
+The first argument declares what test type you would like to run. The three options are currently xAOD, uproot, and stress.
+
+The second argument is your ServiceX login token.
+
+## Alternate
+
 All the tests require local working versions of ServiceX with both the xAOD and the uproot backends. Starting from a clean installation of ServiceX, first set up a virtual environment with Python 3.
 
 Linux/MacOS:
