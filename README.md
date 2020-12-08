@@ -9,22 +9,20 @@ These are tests for the backends of IRIS-HEP's ServiceX. The intended functional
 Pull the tests using docker commands:
 
 ```
-docker pull docker pull davidwliu/servicex-backend-tests:v-desired
+docker pull docker pull davidwliu/servicex-backend-tests:latest
 ```
 
-Replace the version tag `v-desired` with the desired version from: https://hub.docker.com/r/davidwliu/servicex-backend-tests
-
-Afterwards, run the image using this command with two arguments:
+Afterwards, run the image using this command, which takes three arguments:
 
 ```
-docker run davidwliu/servicex-backend-tests:v-desired TEST_TYPE TOKEN
+docker run davidwliu/servicex-backend-tests:latest TEST_TYPE TOKEN OPTIONAL_ENDPOINT
 ```
-
-Again, replace the version tag `v-desired` with the desired version.
 
 The first argument `TEST_TYPE` declares what test type you would like to run. The three options are currently xAOD, uproot, and stress.
 
 The second argument `TOKEN` is your ServiceX login token.
+
+The third argument `OPTIONAL_ENDPOINT` is optional, specifying a custom endpoint to use with ServiceX. If no argument is submitted here, the tests will run using the standard endpoints.
 
 ## Alternate
 
