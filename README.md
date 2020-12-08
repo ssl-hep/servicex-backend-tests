@@ -12,17 +12,19 @@ Pull the tests using docker commands:
 docker pull docker pull davidwliu/servicex-backend-tests:v-desired
 ```
 
-Replace the version tag with the desired version from: https://hub.docker.com/r/davidwliu/servicex-backend-tests
+Replace the version tag `v-desired` with the desired version from: https://hub.docker.com/r/davidwliu/servicex-backend-tests
 
-Afterwards, run the image. This command takes two arguments:
+Afterwards, run the image using this command with two arguments:
 
 ```
-docker run davidwliu/servicex-backend-tests:v2 TEST_TYPE TOKEN
+docker run davidwliu/servicex-backend-tests:v-desired TEST_TYPE TOKEN
 ```
 
-The first argument declares what test type you would like to run. The three options are currently xAOD, uproot, and stress.
+Again, replace the version tag `v-desired` with the desired version.
 
-The second argument is your ServiceX login token.
+The first argument `TEST_TYPE` declares what test type you would like to run. The three options are currently xAOD, uproot, and stress.
+
+The second argument `TOKEN` is your ServiceX login token.
 
 ## Alternate
 
