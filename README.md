@@ -41,7 +41,7 @@ Windows:
 ```
 
 Once the virtual environment is active, install the dependencies for the testing suite with the command `% pip install -r requirements.txt`.
-Use `kubectl port-forward` on the pods `servicex-app` and `minio` outside of the virtual environment. Here, there must be either a .servicex file in the home directory pointing to the relevant endpoints, or `servicex-app` should be forwarded on port 5000 and `minio` should be on port 9000.
+Use `kubectl port-forward` on the pods `servicex-app` and `minio` outside of the virtual environment. Here, there must be either a servicex.yaml file in the home directory pointing to the relevant endpoints, or `servicex-app` should be forwarded on port 5000 and `minio` should be on port 9000.
 
 We are now ready to run any of the tests by browsing to the `/tests` directory and running
 
