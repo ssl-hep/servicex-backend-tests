@@ -9,7 +9,7 @@ from servicex import ServiceXDataset
 from servicex.minio_adaptor import MinioAdaptor
 from servicex.servicex_adaptor import ServiceXAdaptor
 from func_adl_servicex import ServiceXSourceXAOD
-import uproot_methods
+import vector
 from numpy import genfromtxt
 import numpy as np
 import time
@@ -259,7 +259,7 @@ async def test_multiple_requests():
                ]
 
     async def fetch_data(dataset):
-        query = ServiceXDatasetSource(dataset) \
+        query = ServiceXSourceXAOD(dataset) \
             .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), e.Electrons("Electrons"))') \
             .Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
                                  ls[0].Select(lambda jet: jet.eta()), \

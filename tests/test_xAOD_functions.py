@@ -3,16 +3,11 @@
 # Written by David Liu at the University of Washington, Seattle.
 # 29 June 2020
 
-import servicex
+import awkward
 from servicex import ServiceXDataset
-from servicex.minio_adaptor import MinioAdaptor
-from servicex.servicex_adaptor import ServiceXAdaptor
 from func_adl_servicex import ServiceXSourceXAOD
-import uproot_methods
+import vector
 from numpy import genfromtxt
-import numpy as np
-import math
-import asyncio
 import pytest
 import logging
 
@@ -59,13 +54,12 @@ def test_retrieve_lepton_data():
         .value()
 
     def mkok(s):
-        from awkward import ChunkedArray
-        return ChunkedArray.concatenate(query[s].chunks)
-    four_vector = uproot_methods.TLorentzVectorArray.from_ptetaphi(mkok('ElePt'), mkok('EleEta'), mkok('ElePhi'), mkok('EleE'))
+        return awkward.concatenate(query[s].chunks)  # type: ignore
+    four_vector = vector.arr(pt=mkok('ElePt'), eta=mkok('EleEta'), phi=mkok('ElePhi'), E=mkok('EleE'))
     four_vector = four_vector[four_vector.counts >= 2]
-    dielectrons = four_vector[:, 0] + four_vector[:, 1]
+    dielectrons = four_vector[:, 0] + four_vector[:, 1]  # type: ignore
 
-    assert len(dielectrons.mass) == 1502958
+    assert len(dielectrons.mass) == 1502958  # type: ignore
 
 # test if jet moments can be pulled properly
 def test_getAttributefloat_data():

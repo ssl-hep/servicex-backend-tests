@@ -1,4 +1,5 @@
-servicex==2.1.1
+servicex==2.2.2
+vector
 func-adl-servicex
 pytest
 pytest-asyncio

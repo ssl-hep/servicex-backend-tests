@@ -1,12 +1,9 @@
 # This script checks if a query using ServiceX is actually returning data correctly. This is the Uproot version.
-# Requires that ServiceX be running with appropriate port-forward commands on ports 5000 and 9000 for ServixeX and Minio.
+# Requires that ServiceX be running with appropriate port-forward commands on ports 5000 and 9000 for ServiceX and Minio.
 # Written by David Liu at the University of Washington, Seattle.
 # 6 July 2020
 
-import servicex
-from servicex import ServiceXDataset
 from func_adl_servicex import ServiceXSourceUpROOT
-import uproot_methods
 import pandas as pd
 import awkward as awk
 from numpy import genfromtxt
@@ -18,7 +15,7 @@ def test_retrieve_simple_jet_pts_uproot():
         .AsParquetFiles('junk.parquet') \
         .value()
 
-    columnar_data = awk.fromparquet(data[1])
+    columnar_data = awk.from_parquet(data[1])  # type: ignore
 
     assert len(columnar_data.JetPT) == 52909
 
