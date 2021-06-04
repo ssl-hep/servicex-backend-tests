@@ -38,7 +38,7 @@ def test_func_adl_simple_jet_pts():
     correct_data = genfromtxt('tests/data.csv', delimiter=',')
     assert retrieved_data.all() == correct_data.all()
 
-# test if we can retrieve the electron four-vectors from this particular data set, and that we get back the correct number of lines.
+# test if we can retrieve the electron four-vectors from this particular data set, and that we get back the correct number of lines
 def test_retrieve_lepton_data():
     query = ServiceXSourceXAOD("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00")	\
         .Select('lambda e: (e.Electrons("Electrons"), e.Muons("Muons"))') \
