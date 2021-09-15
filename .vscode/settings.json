@@ -1,0 +1,6 @@
+{
+    "python.testing.pytestArgs": [
+        "--endpoint_xaod",
+        "dev_xaod"
+    ]
+}

@@ -6,7 +6,6 @@
 import servicex
 from servicex import ServiceXDataset
 from func_adl_servicex import ServiceXSourceUpROOT
-import uproot_methods
 import pandas as pd
 import awkward as awk
 from numpy import genfromtxt

@@ -9,7 +9,6 @@ from servicex import ServiceXDataset
 from servicex.minio_adaptor import MinioAdaptor
 from servicex.servicex_adaptor import ServiceXAdaptor
 from func_adl_servicex import ServiceXSourceXAOD
-import uproot_methods
 from numpy import genfromtxt
 import numpy as np
 import time
