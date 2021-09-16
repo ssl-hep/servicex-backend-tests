@@ -14,7 +14,7 @@ def test_func_adl_simple_jet_pts(endpoint_cms):
     retrieved_data = query.JetPt
     retrieved_data = retrieved_data.to_numpy()
     print(retrieved_data.shape)
-    assert len(retrieved_data) == 100
+    assert len(retrieved_data) == 398291
 
 
 def test_metadata(endpoint_cms):
@@ -37,4 +37,4 @@ def test_metadata(endpoint_cms):
     retrieved_data = query.JetPt
     retrieved_data = retrieved_data.to_numpy()
     print(retrieved_data.shape)
-    assert len(retrieved_data) == 100
+    assert len(retrieved_data) == 398291
