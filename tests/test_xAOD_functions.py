@@ -3,24 +3,9 @@
 # Written by David Liu at the University of Washington, Seattle.
 # 29 June 2020
 
-from tests.conftest import endpoint_xaod
-import servicex
 from servicex import ServiceXDataset
-from servicex.minio_adaptor import MinioAdaptor
-from servicex.servicex_adaptor import ServiceXAdaptor
 from func_adl_servicex import ServiceXSourceXAOD
 from numpy import genfromtxt
-import numpy as np
-import math
-import asyncio
-import pytest
-import logging
-
-@pytest.fixture(autouse=True)
-def turn_on_logging():
-    logging.basicConfig(level=logging.DEBUG)
-    yield None
-    logging.basicConfig(level=logging.WARNING)
 
 # test if we can retrieve the Pts from this particular data set, and that we get back the correct number of lines.
 def test_retrieve_simple_jet_pts(endpoint_xaod):
