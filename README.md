@@ -50,3 +50,12 @@ pytest test-script-name.py
 ```
 
 When finished, we can deactivate our virtual environment with `deactivate`.
+
+
+## Example Running
+
+Lets say you wanted to do a very quick test of an end point installed in your `servicex.yaml` file for an `xAOD` end-point. You could use the following command to send some `qastle` to it:
+
+```
+pytest tests/test_xAOD_functions.py --endpoint_xaod=xaod_r21 -k test_retrieve_simple_jet_pts
+```
