@@ -11,19 +11,19 @@ dataset_name = "mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Ze
 
 if len(sys.argv) > 1:
     token = sys.argv[1]
+else:
+    print("needs at least token input parameter")
+    sys.exit(1)
 if len(sys.argv) > 2:
     endpoint = sys.argv[2]
 if len(sys.argv) > 3:
     dataset_name = sys.argv[3]
 
-    f = open("../servicex.yaml", "w")
+    f = open("servicex.yaml", "w")
     sx = f"api_endpoints: \n - endpoint: {endpoint}\n    token: {token}\n    name: xaod"
     print(sx)
     f.write(sx)
     f.close()
-else:
-    print("needs at least token input parameter")
-    sys.exit(1)
 
 
 src = ServiceXSourceXAOD(dataset_name, backend="xaod")
