@@ -19,11 +19,11 @@ if len(sys.argv) > 2:
 if len(sys.argv) > 3:
     dataset_name = sys.argv[3]
 
-    f = open("servicex.yaml", "w")
-    sx = f"api_endpoints: \n - endpoint: {endpoint}\n    token: {token}\n    name: xaod"
-    print(sx)
-    f.write(sx)
-    f.close()
+f = open("servicex.yaml", "w")
+sx = f"api_endpoints: \n - endpoint: {endpoint}\n    token: {token}\n    name: xaod"
+print(sx)
+f.write(sx)
+f.close()
 
 
 src = ServiceXSourceXAOD(dataset_name, backend="xaod")
