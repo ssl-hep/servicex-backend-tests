@@ -7,12 +7,15 @@ spec:
     - name: servicex-test
       image: sslhep/servicex_backend_test:latest
       command:
-        - "source"
-      args: ["test_xaod.sh", "HERE TOKEN"]
+        - "python"
+      args: ["tests/single_xaod_test.py", "HERE TOKEN"]
+      # command:
+      # - "sleep"
+      # args: ["3600"]
       resources:
         requests:
-          memory: "512Mi"
+          memory: "4Gi"
           cpu: "500m"
         limits:
-          memory: "1024Mi"
+          memory: "8Gi"
           cpu: "1000m"
