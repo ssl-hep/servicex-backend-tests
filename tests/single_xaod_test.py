@@ -12,7 +12,7 @@ dataset_name = "mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Ze
 if len(sys.argv) > 1:
     token = sys.argv[1]
 else:
-    print("needs at least token input parameter")
+    print("Usage: python single_xaod_test.py <token> [endpoint] [dataset].")
     sys.exit(1)
 if len(sys.argv) > 2:
     endpoint = sys.argv[2]

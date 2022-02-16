@@ -3,6 +3,7 @@ kind: Pod
 metadata:
   name: single-xaod-test
 spec:
+  restartPolicy: OnFailure
   containers:
     - name: servicex-test
       image: sslhep/servicex_backend_test:latest
