@@ -6,16 +6,12 @@ spec:
   containers:
     - name: servicex-test
       image: sslhep/servicex_backend_test:latest
-      # command:
-      #   - "python"
-      # args:
-      #   [
-      #     "tests/single_xaod_test.py",
-      #     "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NDQ0NDE4MjAsIm5iZiI6MTY0NDQ0MTgyMCwianRpIjoiMGIzNTVjMjMtZTU4Zi00MjcwLWI4OWQtN2YwNzc2YzZmY2I4IiwiaWRlbnRpdHkiOiJhNTFkYmQ3ZS1kMjc0LTExZTUtOWIxMS05YmUzNDdhMDljZTAiLCJ0eXBlIjoicmVmcmVzaCJ9.856aUsDWC0hg3Sn4TLgjmf3tIEJ-TQ7ekQIt1Dwor9E",
-      #   ]
       command:
-        - "sleep"
-      args: ["3600"]
+        - "python"
+      args: ["tests/single_xaod_test.py", "token", "endpoint"]
+      # command:
+      #   - "sleep"
+      # args: ["3600"]
       resources:
         requests:
           memory: "4Gi"
