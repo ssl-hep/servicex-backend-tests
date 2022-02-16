@@ -1,0 +1,7 @@
+apiVersion: v2
+name: dashboard
+description: Deploy a GitActionBoard for ServiceX
+type: application
+
+version: 1.0
+appVersion: "1.1"
