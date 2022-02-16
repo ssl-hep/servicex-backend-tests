@@ -3,3 +3,5 @@ __pycache__/
 .ipytest_cache/
 .venv/
 kube/ign*
+.idea/
+river-dashboard-values.yaml

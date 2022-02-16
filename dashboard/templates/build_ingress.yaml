@@ -1,0 +1,33 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    {{- if .Values.ingress.tls.clusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    {{- end }}
+
+  labels:
+    app: {{ .Release.Name }}-dashboard
+  name: {{ .Release.Name }}-build-dashboard
+spec:
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+  - hosts:
+    - {{ .Release.Name }}-build.{{ .Values.ingress.host }}
+    secretName: {{ tpl .Values.ingress.tls.buildSecretName . }}
+  {{- end }}
+  rules:
+  - host: {{ .Release.Name }}-build.{{ .Values.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-build-dashboard-service
+            port:
+              number: 8080
+{{- end }}

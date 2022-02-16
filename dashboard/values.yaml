@@ -1,0 +1,58 @@
+# Default values for dashboard.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+# Obtain a GitHub token to increase the API limits. Leave blank and use the
+# anonymous rate limits
+githubToken:
+build:
+  REPO_OWNER_NAME: ssl-hep
+  REPO_NAMES:
+    - ServiceX_App
+    - ServiceX_Uproot_Transformer
+    - ServiceX_frontend
+    - ServiceX_DID_Finder_Rucio
+    - ServiceX_Code_Generator_Python
+    - ServiceX_DID_Finder_CERNOpenData
+    - ServiceX_DID_Finder_lib
+    - ServiceX_transformer
+    - X509_Secrets
+    - ServiceX_Code_Generator_FuncADL_uproot
+    - ServiceX_Code_Generator_FuncADL_xAOD
+    - ServiceX_xAOD_CPP_transformer
+integration:
+  REPO_OWNER_NAME: ssl-hep
+  REPO_NAMES:
+    - servicex-backend-tests
+image:
+  repository: ottoopensource/gitactionboard
+  pullPolicy: IfNotPresent
+  tag: "1.1"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+ingress:
+  enabled: false
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
