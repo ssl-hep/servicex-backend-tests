@@ -1,0 +1,33 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: xOAD tests
+
+on:
+  push:
+  schedule:
+    - cron: 5 * * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Execute xAOD tests
+        env:
+          XAOD_TOKEN: ${{ secrets.SECRET_XAOD_TOKEN }}
+        run: |
+          source test_xaod.sh $XAOD_TOKEN
