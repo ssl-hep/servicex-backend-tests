@@ -3,23 +3,22 @@
 # Written by David Liu at the University of Washington, Seattle.
 # 6 July 2020
 
-import servicex
-from servicex import ServiceXDataset
 from func_adl_servicex import ServiceXSourceUpROOT
-import pandas as pd
-import awkward as awk
-from numpy import genfromtxt
+
+dataset_name = "root://eospublic.cern.ch//eos/opendata/atlas/OutreachDatasets/2020-01-22/4lep/MC/mc_345060.ggH125_ZZ4lep.4lep.root"
 
 # test if we can retrieve the Pts from this particular data set, and that we get back the correct number of lines.
+
+
 def test_retrieve_simple_jet_pts_uproot():
-    ds = ServiceXSourceUpROOT("data15_13TeV:data15_13TeV.00282784.physics_Main.deriv.DAOD_PHYSLITE.r9264_p3083_p4165_tid21568807_00", "CollectionTree")
-    data = ds.Select("lambda e: {'JetPT': e['AnalysisJetsAuxDyn.pt']}") \
-        .AsParquetFiles('junk.parquet') \
-        .value()
+    src = ServiceXSourceUpROOT([dataset_name], 'mini', backend_name="uproot")
+    r = (
+        src.Select(lambda e: {'lep_pt': e['lep_pt']}).AsAwkwardArray().value()
+    )
 
-    columnar_data = awk.fromparquet(data[1])
+    print(r)
 
-    assert len(columnar_data.JetPT) == 52909
+    # assert len(r.JetPT) == 52909
 
 # test if lambda capture is functional for uproot backend
 # def test_lambda_capture():

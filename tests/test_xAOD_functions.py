@@ -8,20 +8,25 @@ from func_adl_servicex import ServiceXSourceXAOD
 from numpy import genfromtxt
 
 # test if we can retrieve the Pts from this particular data set, and that we get back the correct number of lines.
+
+
 def test_retrieve_simple_jet_pts(endpoint_xaod):
-   query = "(call ResultTTree (call Select (call SelectMany (call EventDataset (list 'localds:bogus')) (lambda (list e) (call (attr e 'Jets') 'AntiKt4EMTopoJets'))) (lambda (list j) (/ (call (attr j 'pt')) 1000.0))) (list 'JetPt') 'analysis' 'junk.root')"
-   dataset = ServiceXDataset("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00", backend_name = endpoint_xaod)
-   r = dataset.get_data_pandas_df(query)
-   assert len(r.index) == 11355980
+    query = "(call ResultTTree (call Select (call SelectMany (call EventDataset (list 'localds:bogus')) (lambda (list e) (call (attr e 'Jets') 'AntiKt4EMTopoJets'))) (lambda (list j) (/ (call (attr j 'pt')) 1000.0))) (list 'JetPt') 'analysis' 'junk.root')"
+    dataset = ServiceXDataset(
+        "mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00", backend_name=endpoint_xaod)
+    r = dataset.get_data_pandas_df(query)
+    assert len(r.index) == 11355980
 
 # tests if a func_adl query works as above; however, in this case we test to make sure we retrieve the correct amount of data in the correct order.
+
+
 def test_func_adl_simple_jet_pts(endpoint_xaod):
     query = (ServiceXSourceXAOD("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00", backend=endpoint_xaod)
-        .SelectMany('lambda e: (e.Jets("AntiKt4EMTopoJets"))')
-        .Where('lambda j: (j.pt()/1000)>30')
-        .Select('lambda j: (j.pt())')
-        .AsPandasDF("JetPt")
-        .value())
+             .SelectMany('lambda e: (e.Jets("AntiKt4EMTopoJets"))')
+             .Where('lambda j: (j.pt()/1000)>30')
+             .Select('lambda j: (j.pt())')
+             .AsPandasDF("JetPt")
+             .value())
 
     retrieved_data = query.JetPt
     retrieved_data = retrieved_data.to_numpy()
@@ -29,25 +34,27 @@ def test_func_adl_simple_jet_pts(endpoint_xaod):
     assert retrieved_data.all() == correct_data.all()
 
 
-def test_func_adl_simple_jet_pts_metadata(endpoint_xaod):
-    query = (ServiceXSourceXAOD("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00", backend=endpoint_xaod)
-        .SelectMany(lambda e: (e.Jets("AntiKt4EMTopoJets")))
-        .Where(lambda j: (j.pt()/1000)>30)
-        .Select(lambda j: (j.pt()))
-        .MetaData({
-            'metadata_type': 'add_method_type_info',
-            'type_string': 'xAOD::Jet',
-            'method_name': 'pt',
-            'return_type': 'double',
-            'is_pointer': 'False',
-        })
-        .AsPandasDF("JetPt")
-        .value())
+# there is no more MetaData...
 
-    retrieved_data = query.JetPt
-    retrieved_data = retrieved_data.to_numpy()
-    correct_data = genfromtxt('tests/data.csv', delimiter=',')
-    assert retrieved_data.all() == correct_data.all()
+# def test_func_adl_simple_jet_pts_metadata(endpoint_xaod):
+#     query = (ServiceXSourceXAOD("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00", backend=endpoint_xaod)
+#              .SelectMany(lambda e: (e.Jets("AntiKt4EMTopoJets")))
+#              .Where(lambda j: (j.pt()/1000) > 30)
+#              .Select(lambda j: (j.pt()))
+#              .MetaData({
+#                  'metadata_type': 'add_method_type_info',
+#                  'type_string': 'xAOD::Jet',
+#                  'method_name': 'pt',
+#                  'return_type': 'double',
+#                  'is_pointer': 'False',
+#              })
+#              .AsPandasDF("JetPt")
+#              .value())
+
+#     retrieved_data = query.JetPt
+#     retrieved_data = retrieved_data.to_numpy()
+#     correct_data = genfromtxt('tests/data.csv', delimiter=',')
+#     assert retrieved_data.all() == correct_data.all()
 
 # test if we can retrieve the electron four-vectors from this particular data set, and that we get back the correct number of lines.
 # def test_retrieve_lepton_data(endpoint_xaod):
@@ -74,6 +81,8 @@ def test_func_adl_simple_jet_pts_metadata(endpoint_xaod):
 #     assert len(dielectrons.mass) == 1502958
 
 # test if jet moments can be pulled properly
+
+
 def test_getAttributefloat_data(endpoint_xaod):
     query = ServiceXSourceXAOD("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00", backend=endpoint_xaod) \
         .SelectMany('lambda e: e.Jets("AntiKt4EMTopoJets")') \
@@ -81,10 +90,12 @@ def test_getAttributefloat_data(endpoint_xaod):
         .Select('lambda j: j.getAttributeFloat("LArQuality")') \
         .AsPandasDF("LArQuality") \
         .value()
-    
+
     assert len(query.LArQuality) == 3551964
 
 # test if lambda capture is working properly in func_adl
+
+
 def test_lambda_capture(endpoint_xaod):
     dataset = "mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00"
 
