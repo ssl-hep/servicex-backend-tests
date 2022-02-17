@@ -6,7 +6,7 @@ name: xOAD River testing2
 on:
   push:
   schedule:
-    - cron: 15 * * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
+    - cron: 15 0,12 * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
 
 jobs:
   build:

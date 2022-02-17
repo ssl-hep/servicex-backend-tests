@@ -6,7 +6,7 @@ name: Uproot AF tests
 on:
   push:
   schedule:
-    - cron: 0 * * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
+    - cron: 0 0,12 * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
 
 jobs:
   build:

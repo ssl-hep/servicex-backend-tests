@@ -6,7 +6,7 @@ name: Uproot River testing1
 on:
   push:
   schedule:
-    - cron: 10 * * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
+    - cron: 10 0,12 * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
 
 jobs:
   build:
