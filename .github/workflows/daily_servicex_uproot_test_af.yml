@@ -1,12 +1,12 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Uproot River testing1
+name: Uproot AF tests
 
 on:
   push:
   schedule:
-    - cron: 10 * * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
+    - cron: 0 * * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
 
 jobs:
   build:
@@ -28,6 +28,6 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Execute Uproot tests
         env:
-          TOKEN: ${{ secrets.SECRET_TESTING1_UPROOT_TOKEN }}
+          TOKEN: ${{ secrets.SECRET_AF_UPROOT_TOKEN }}
         run: |
-          source test_uproot.sh $TOKEN https://servicex-release-testing-1.servicex.ssl-hep.org/
+          source test_uproot.sh $TOKEN https://uproot-atlas.servicex.af.uchicago.edu/
