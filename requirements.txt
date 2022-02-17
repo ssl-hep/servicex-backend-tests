@@ -1,3 +1,5 @@
-func-adl-servicex
+servicex-databinder
+# servicex
+# func-adl-servicex>=1.1
 pytest
 pytest-asyncio
