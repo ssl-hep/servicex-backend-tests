@@ -2,6 +2,8 @@
 
 These are tests for the backends of IRIS-HEP's ServiceX. The intended functionality is to ensure that the xAOD and uproot transformers both correctly provide the same data.
 
+Tests are run by GitHub actions. Here the current state of tests run against production ServiceX instances: ![servicex-backend-tests Actions](https://api.meercode.io/badge/ssl-hep/servicex-backend-tests?type=ci-score&include="Uproot%20AF%20tests","xAOD%20AF%20tests"&branch=dev&lastDay=14)
+
 # Installation and Execution
 
 ## Docker
