@@ -5,3 +5,4 @@ __pycache__/
 kube/ign*
 .idea/
 river-dashboard-values.yaml
+servicex.yaml
