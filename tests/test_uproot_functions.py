@@ -1,24 +1,29 @@
 # This script checks if a query using ServiceX is actually returning data correctly. This is the Uproot version.
-# Requires that ServiceX be running with appropriate port-forward commands on ports 5000 and 9000 for ServixeX and Minio.
 # Written by David Liu at the University of Washington, Seattle.
 # 6 July 2020
 
 from func_adl_servicex import ServiceXSourceUpROOT
+from servicex import ignore_cache
 
+# Test with a data file that is directly accessible
 dataset_name = "root://eospublic.cern.ch//eos/opendata/atlas/OutreachDatasets/2020-01-22/4lep/MC/mc_345060.ggH125_ZZ4lep.4lep.root"
 
-# test if we can retrieve the Pts from this particular data set, and that we get back the correct number of lines.
-
-
 def test_retrieve_simple_jet_pts_uproot():
-    src = ServiceXSourceUpROOT([dataset_name], 'mini', backend_name="uproot")
-    r = (
-        src.Select(lambda e: {'lep_pt': e['lep_pt']}).AsAwkwardArray().value()
-    )
+    '''Check open data returns the expected number of leptons
+    
+    * Checks that ServiceX is up and responding
+    * Bypasses the DID finder capabilities of ServiceX
+
+    '''
+    with ignore_cache():
+        src = ServiceXSourceUpROOT([dataset_name], 'mini', backend_name="uproot")
+        r = (
+            src.Select(lambda e: {'lep_pt': e['lep_pt']}).AsAwkwardArray().value()
+        )
 
     print(r)
 
-    # assert len(r.JetPT) == 52909
+    assert len(r.lep_pt) == 164716
 
 # test if lambda capture is functional for uproot backend
 # def test_lambda_capture():
