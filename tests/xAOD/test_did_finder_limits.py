@@ -35,7 +35,7 @@ def test_did_finder_limits(endpoint_xaod):
                  .SelectMany('lambda e: (e.Jets("AntiKt4EMTopoJets"))')
                  .Where('lambda j: (j.pt()/1000)>30')
                  .Select('lambda j: (j.pt())')
-                 .AsPandasDF("JetPt")
+                 .AsRoot("JetPt")
                  .value(title="Test DID Finder Limits"))
 
         print(query)

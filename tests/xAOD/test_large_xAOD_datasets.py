@@ -18,11 +18,11 @@ import pytest
 
 # this function tests the ability of ServiceX to pull one hundred column of data from a 10 TB dataset
 @pytest.mark.stress
-def test_servicex_10TB_capacity():
-    dataset = ServiceXDataset('data16_13TeV:data16_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ5.grp16_v01_p4173', max_workers = 400) # define which dataset we want
+def test_servicex_10TB_capacity(endpoint_xaod):
+    dataset = ServiceXDataset('data16_13TeV:data16_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ5.grp16_v01_p4173', max_workers=400) # define which dataset we want
 
     # here, we build the relevant query and send it to ServiceX. Refer to https://github.com/iris-hep/func_adl/blob/master/documentation.md for how to build the query.
-    query = ServiceXSourceXAOD(dataset) \
+    query = ServiceXSourceXAOD(dataset, backend=endpoint_xaod) \
         .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), \
                             e.Tracks("AntiKt4PV0TrackJets"), \
                             e.BTopo("BTagging_AntiKT4EMTopo.index"), \
