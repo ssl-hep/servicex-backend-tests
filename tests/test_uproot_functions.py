@@ -8,7 +8,7 @@ from servicex import ignore_cache
 # Test with a data file that is directly accessible
 dataset_name = "root://eospublic.cern.ch//eos/opendata/atlas/OutreachDatasets/2020-01-22/4lep/MC/mc_345060.ggH125_ZZ4lep.4lep.root"
 
-def test_retrieve_simple_jet_pts_uproot():
+def test_retrieve_simple_jet_pts_uproot(endpoint_uproot):
     '''Check open data returns the expected number of leptons
     
     * Checks that ServiceX is up and responding
@@ -16,7 +16,7 @@ def test_retrieve_simple_jet_pts_uproot():
 
     '''
     with ignore_cache():
-        src = ServiceXSourceUpROOT([dataset_name], 'mini', backend_name="uproot")
+        src = ServiceXSourceUpROOT([dataset_name], 'mini', backend_name=endpoint_uproot)
         r = (
             src.Select(lambda e: {'lep_pt': e['lep_pt']}).AsAwkwardArray().value()
         )

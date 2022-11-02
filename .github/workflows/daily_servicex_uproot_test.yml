@@ -4,7 +4,10 @@
 name: Uproot River testing1
 
 on:
+  workflow_dispatch:
   push:
+    branches:
+      - 'dev'
   schedule:
     - cron: 10 0,12 * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
 
@@ -30,4 +33,4 @@ jobs:
         env:
           TOKEN: ${{ secrets.SECRET_TESTING1_UPROOT_TOKEN }}
         run: |
-          source test_uproot.sh $TOKEN https://servicex-release-testing-1.servicex.ssl-hep.org/
+          source test_uproot.sh $TOKEN https://servicex-release-int-uproot.servicex.ssl-hep.org

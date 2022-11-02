@@ -9,6 +9,7 @@ def pytest_addoption(parser):
     )
     parser.addoption("--endpoint_xaod", action="store", default="xaod")
     parser.addoption("--endpoint_cms", action="store", default="cms_run1_aod")
+    parser.addoption("--endpoint_uproot", action="store", default="uproot")
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "stress: mark test as a stress test")
@@ -30,6 +31,9 @@ def endpoint_xaod(pytestconfig):
 def endpoint_cms(pytestconfig):
     return pytestconfig.getoption("endpoint_cms")
 
+@pytest.fixture()
+def endpoint_uproot(pytestconfig):
+    return pytestconfig.getoption("endpoint_uproot")
 
 @pytest.fixture(autouse=True)
 def turn_on_logging():

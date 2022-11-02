@@ -2,5 +2,5 @@
 # David Liu, 21 September 2020, Seattle, WA.
 
 printf "api_endpoints:\n  - endpoint: $2\n    token: $1\n    name: uproot\n    type: uproot" > ./servicex.yaml
-pytest -s tests/test_uproot_functions.py
+pytest -s tests/test_uproot_functions.py --endpoint_uproot=uproot
 rm ./servicex.yaml
