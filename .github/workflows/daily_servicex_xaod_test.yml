@@ -4,12 +4,15 @@
 name: xOAD River testing2
 
 on:
+  workflow_dispatch:
   push:
+    branches:
+      - 'dev'
   schedule:
     - cron: 15 0,12 * * * # we run every day at 1000 UTC / 0500 EST / 0200 PST
 
 jobs:
-  build:
+  run-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
