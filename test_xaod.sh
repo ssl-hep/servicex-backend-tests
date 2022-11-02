@@ -2,5 +2,5 @@
 # David Liu, 21 September 2020, Seattle, WA.
 
 printf "api_endpoints:\n  - endpoint: $2\n    token: $1\n    name: xaod" > ./servicex.yaml
-pytest tests/test_xAOD_functions.py
+pytest tests/test_xAOD_functions.py --endpoint_xaod=xaod
 rm ./servicex.yaml
