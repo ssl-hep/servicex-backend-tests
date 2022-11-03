@@ -17,6 +17,8 @@ import pytest
 # pytestmark = run_stress_tests # stress tests take upwards of 40 minutes to complete, so we don't do them unless we want to.
 
 # this function tests the ability of ServiceX to pull one hundred column of data from a 10 TB dataset
+
+
 @pytest.mark.stress
 def xxx_broken_test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
     with ignore_cache():
@@ -241,21 +243,23 @@ def xxx_broken_test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
     retrieved_data = query[b'JetPt']  # store the JetPts as a list
 
     assert len(retrieved_data) == 5000  # did we retrieve the correct number of JetPts?
-	
+
 # This test retrieves 20 columns from 10 datasets at the same time. This takes a lot of memory!
+
+
 @pytest.mark.asyncio
 @pytest.mark.stress
 async def xxx_broken_test_multiple_requests():
     dataset = [ServiceXDataset('mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00'), \
-               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_SUSY18.e3649_e5984_s3126_r10201_r10210_p3840_tid18281770_00'), \
+               #    ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_SUSY18.e3649_e5984_s3126_r10201_r10210_p3840_tid18281770_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r10724_r10726_p4180_tid21859882_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r10724_r10726_p4180_tid21859885_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r9364_r9315_p4180_tid21859934_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_s3126_r10201_r10210_p4180_tid21860366_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT12.e3649_e5984_s3126_r10724_r10726_p3978_tid19368338_00'), \
-               ServiceXDataset('mc16_13TeV:mc16_13TeV.301001.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_180M250.deriv.DAOD_EXOT19.e3649_e5984_s3126_r10724_r10726_p3978_tid19509568_00'), \
-               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT12.e3649_e5984_s3126_r9364_r9315_p3978_tid19370588_00'), \
-               ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT19.e3649_e5984_s3126_r10724_r10726_p3978_tid19511379_00') \
+               #    ServiceXDataset('mc16_13TeV:mc16_13TeV.301001.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_180M250.deriv.DAOD_EXOT19.e3649_e5984_s3126_r10724_r10726_p3978_tid19509568_00'), \
+               #    ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT12.e3649_e5984_s3126_r9364_r9315_p3978_tid19370588_00'), \
+               #    ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT19.e3649_e5984_s3126_r10724_r10726_p3978_tid19511379_00') \
                ]
 
     async def fetch_data(dataset):
@@ -281,25 +285,25 @@ async def xxx_broken_test_multiple_requests():
                                  ls[1].Select(lambda ele: ele.phi()), \
                                  ls[1].Select(lambda ele: ele.pt()), \
                                  ls[1].Select(lambda ele: ele.rapidity()))') \
-            .AsAwkwardArray(("JetE", \
-                             "JetEta", \
-                             "JetIndex", \
-                             "JetM", \
-                             "JetPhi", \
-                             "JetPt", \
-                             "JetPx", \
-                             "JetPy", \
-                             "JetPz", \
-                             "JetRapidity", \
-                             "EleCharge", \
-                             "EleE", \
-                             "EleEta", \
-                             "EleIndex", \
-                             "EleM", \
-                             "EleNClusters", \
-                             "EleNTrack", \
-                             "ElePhi", \
-                             "ElePt", \
+            .AsAwkwardArray(("JetE",
+                             "JetEta",
+                             "JetIndex",
+                             "JetM",
+                             "JetPhi",
+                             "JetPt",
+                             "JetPx",
+                             "JetPy",
+                             "JetPz",
+                             "JetRapidity",
+                             "EleCharge",
+                             "EleE",
+                             "EleEta",
+                             "EleIndex",
+                             "EleM",
+                             "EleNClusters",
+                             "EleNTrack",
+                             "ElePhi",
+                             "ElePt",
                              "EleRapidity")) \
             .value_async()
 
@@ -310,22 +314,22 @@ async def xxx_broken_test_multiple_requests():
         data_slot = fetch_data(dataset[i])
         data_list.append(data_slot)
 
-    ds0, ds1, ds2, ds3, ds4, ds5, ds6, ds7, ds8, ds9 = await asyncio.gather(data_list[0], \
-                                                            data_list[1], \
-                                                            data_list[2], \
-                                                            data_list[3], \
-                                                            data_list[4], \
-                                                            data_list[5], \
-                                                            data_list[6], \
-                                                            data_list[7], \
-                                                            data_list[8], \
-                                                            data_list[9])
+    ds0, ds1, ds2, ds3, ds4, ds5, ds6, ds7, ds8, ds9 = await asyncio.gather(data_list[0],
+                                                                            data_list[1],
+                                                                            data_list[2],
+                                                                            data_list[3],
+                                                                            data_list[4],
+                                                                            data_list[5],
+                                                                            data_list[6],
+                                                                            data_list[7],
+                                                                            data_list[8],
+                                                                            data_list[9])
 
     total_length = len(ds0[b'JetPt']) + len(ds1[b'JetPt']) + \
-                   len(ds2[b'JetPt']) + len(ds3[b'JetPt']) + \
-                   len(ds4[b'JetPt']) + len(ds5[b'JetPt']) + \
-                   len(ds6[b'JetPt']) + len(ds7[b'JetPt']) + \
-                   len(ds8[b'JetPt']) + len(ds9[b'JetPt'])
+        len(ds2[b'JetPt']) + len(ds3[b'JetPt']) + \
+        len(ds4[b'JetPt']) + len(ds5[b'JetPt']) + \
+        len(ds6[b'JetPt']) + len(ds7[b'JetPt']) + \
+        len(ds8[b'JetPt']) + len(ds9[b'JetPt'])
 
 # did we pull the correct amount of data from all 10 datasets?
     assert total_length == 10264173
