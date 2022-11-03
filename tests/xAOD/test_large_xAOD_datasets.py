@@ -20,7 +20,7 @@ import pytest
 
 
 @pytest.mark.stress
-def xxx_broken_test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
+def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
     with ignore_cache():
         sx = ServiceXDataset(large_xaod_did,
                              backend_name=endpoint_xaod,
@@ -249,7 +249,7 @@ def xxx_broken_test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
 
 @pytest.mark.asyncio
 @pytest.mark.stress
-async def xxx_broken_test_multiple_requests():
+async def test_multiple_requests():
     dataset = [ServiceXDataset('mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00'), \
                #    ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_SUSY18.e3649_e5984_s3126_r10201_r10210_p3840_tid18281770_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r10724_r10726_p4180_tid21859882_00'), \
