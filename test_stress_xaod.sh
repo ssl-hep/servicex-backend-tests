@@ -2,5 +2,5 @@
 # David Liu, 21 September 2020, Seattle, WA.
 
 printf "api_endpoints:\n  - endpoint: https://xaod.servicex.ssl-hep.org/\n    email: $1\n    password: $2" > ./servicex.yaml
-pytest --stress tests/test_large_xAOD_datasets.py
+pytest --stress tests/xAOD/test_large_xAOD_datasets.py
 rm ./servicex.yaml
