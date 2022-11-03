@@ -27,21 +27,38 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import pytest
 from func_adl_servicex import ServiceXSourceUpROOT
-from servicex import ignore_cache, ServiceXException
-
-# Test with a data file that is directly accessible
-dataset_name = "root://eospublic.cern.ch//eos/opendata/atlas/OutreachDatasets/2020-01-22/4lep/MC/mc_345060.ggH125_ZZ4lep.4lep.root"
+from servicex import ignore_cache, ServiceXException, ServiceXDataset
 
 
-def test_unknown_property(endpoint_uproot):
+def test_unknown_property(endpoint_uproot, uproot_single_file):
     with pytest.raises(ServiceXException) as bad_property_exception:
         with ignore_cache():
-            src = ServiceXSourceUpROOT([dataset_name], 'mini', backend_name=endpoint_uproot)
-            r = (
-                src.Select(lambda e: {'lep_pt': e['lep_ptttttt']}).AsAwkwardArray().value()
-            )
+            sx = ServiceXDataset([uproot_single_file],
+                                 backend_name=endpoint_uproot,
+                                 status_callback_factory=None)
+
+            src = ServiceXSourceUpROOT(sx, 'mini')
+            src.Select(lambda e: {'lep_pt': e['lep_ptttttt']}).AsAwkwardArray().value()
 
     print("Bad property in query results in exception as expected")
 
     # todo: This is a useless error message
     assert bad_property_exception.value.args[1].startswith('Failed to transform all files in')
+
+
+def test_code_gen_error(endpoint_uproot, uproot_single_file):
+    with pytest.raises(ServiceXException) as bad_property_exception:
+        with ignore_cache():
+            sx = ServiceXDataset([uproot_single_file],
+                                 backend_name=endpoint_uproot,
+                                 status_callback_factory=None)
+
+            src = ServiceXSourceUpROOT(sx, 'mini')
+            src.Select(lambda event: x).AsAwkwardArray().value()
+
+    print("Bad property in query results in exception as expected")
+
+    # todo: Make this test
+    assert bad_property_exception.value.args[1] == \
+    'ServiceX rejected the transformation request: (400){"message": "Failed to submit transform request: Failed to generate translation code: Unknown id: x"}\n'
+

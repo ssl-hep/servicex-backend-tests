@@ -26,16 +26,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import pytest
-from servicex import ignore_cache, ServiceXException
+from servicex import ignore_cache, ServiceXException, ServiceXDataset
 from func_adl_servicex import ServiceXSourceXAOD
 
 
-def test_unknown_property(endpoint_xaod):
+def test_unknown_property(endpoint_xaod, xaod_did):
     with pytest.raises(ServiceXException) as bad_property_exception:
         with ignore_cache():
-            (ServiceXSourceXAOD(
-                "mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00",
-                backend=endpoint_xaod)
+            sx = ServiceXDataset(xaod_did,
+                                 backend_name=endpoint_xaod,
+                                 status_callback_factory=None)
+
+            (ServiceXSourceXAOD(sx)
              .SelectMany('lambda e: (e.Jets("I_Am_Not_A_Jet_Field"))')
              .Where('lambda j: (j.pt()/1000)>30')
              .Select('lambda j: (j.pt())')
@@ -48,12 +50,14 @@ def test_unknown_property(endpoint_xaod):
     assert bad_property_exception.value.args[1].startswith('Failed to transform all files in')
 
 
-def test_codegen_error(endpoint_xaod):
+def test_codegen_error(endpoint_xaod, xaod_did):
     with pytest.raises(ServiceXException) as code_gen_error:
         with ignore_cache():
-            (ServiceXSourceXAOD(
-                "mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00",
-                backend=endpoint_xaod)
+            sx = ServiceXDataset(xaod_did,
+                                 backend_name=endpoint_xaod,
+                                 status_callback_factory=None)
+
+            (ServiceXSourceXAOD(sx)
              .SelectMany('lambda e: (e.NotAnElectronMember("AntiKt4EMTopoJets"))')
              .Where('lambda j: (j.pt()/1000)>30')
              .Select('lambda j: (j.pt())')

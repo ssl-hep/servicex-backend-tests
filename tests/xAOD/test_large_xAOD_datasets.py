@@ -5,7 +5,7 @@
 
 import asyncio
 import servicex
-from servicex import ServiceXDataset
+from servicex import ServiceXDataset, ignore_cache
 from servicex.minio_adaptor import MinioAdaptor
 from servicex.servicex_adaptor import ServiceXAdaptor
 from func_adl_servicex import ServiceXSourceXAOD
@@ -18,12 +18,13 @@ import pytest
 
 # this function tests the ability of ServiceX to pull one hundred column of data from a 10 TB dataset
 @pytest.mark.stress
-def test_servicex_10TB_capacity(endpoint_xaod):
-    dataset = ServiceXDataset('data16_13TeV:data16_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ5.grp16_v01_p4173', max_workers=400) # define which dataset we want
-
-    # here, we build the relevant query and send it to ServiceX. Refer to https://github.com/iris-hep/func_adl/blob/master/documentation.md for how to build the query.
-    query = ServiceXSourceXAOD(dataset, backend=endpoint_xaod) \
-        .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), \
+def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
+    with ignore_cache():
+        sx = ServiceXDataset(large_xaod_did,
+                             backend_name=endpoint_xaod,
+                             status_callback_factory=None)
+        query = (ServiceXSourceXAOD(sx)
+                 .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), \
                             e.Tracks("AntiKt4PV0TrackJets"), \
                             e.BTopo("BTagging_AntiKT4EMTopo.index"), \
                             e.BTrack("BTagging_AntiKt4Track"), \
@@ -32,8 +33,8 @@ def test_servicex_10TB_capacity(endpoint_xaod):
                             e.Electrons("Electrons"), \
                             e.GSFTrack("GSFTrackParticles"), \
                             e.Muons("Muons"), \
-                            e.Photons("Photons"))') \
-        .Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
+                            e.Photons("Photons"))')
+                 .Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
                              ls[0].Select(lambda jet: jet.eta()), \
                              ls[0].Select(lambda jet: jet.index()), \
                              ls[0].Select(lambda jet: jet.m()), \
@@ -133,117 +134,117 @@ def test_servicex_10TB_capacity(endpoint_xaod):
                              ls[9].Select(lambda ptn: ptn.nVertices()), \
                              ls[9].Select(lambda ptn: ptn.phi()), \
                              ls[9].Select(lambda ptn: ptn.pt()), \
-                             ls[9].Select(lambda ptn: ptn.rapidity()))') \
-        .AsAwkwardArray(("JetE", \
-                         "JetEta", \
-                         "JetIndex", \
-                         "JetM", \
-                         "JetPhi", \
-                         "JetPt", \
-                         "JetPx", \
-                         "JetPy", \
-                         "JetPz", \
-                         "JetRapidity", \
-                         "TrackE", \
-                         "TrackEta", \
-                         "TrackIndex", \
-                         "TrackM", \
-                         "TrackPhi", \
-                         "TrackPt", \
-                         "TrackPx", \
-                         "TrackPy", \
-                         "TrackPz", \
-                         "TrackRapidity", \
-                         "BTopoIndex", \
-                         "BTopo2DTrack", \
-                         "BTopo3DTrack", \
-                         "BTopoSV0", \
-                         "BTopoSV1", \
-                         "BTrackIndex", \
-                         "BTrack2DTrack", \
-                         "BTrack3DTrack", \
-                         "BTrackSV0", \
-                         "BTrackSV1", \
-                         "ClustersCalE", \
-                         "ClustersCalEta", \
-                         "ClustersCalM", \
-                         "ClustersCalPhi", \
-                         "ClustersE", \
-                         "ClustersEta", \
-                         "ClustersIndex", \
-                         "ClustersM", \
-                         "ClustersNSamples", \
-                         "ClustersPhi", \
-                         "ClustersRapidity", \
-                         "ClustersRawE", \
-                         "ClustersRawEta", \
-                         "ClustersRawM", \
-                         "ClustersRawPhi", \
-                         "MuonTrackCharge", \
-                         "MuonTrackD0", \
-                         "MuonTrackE", \
-                         "MuonTrackEta", \
-                         "MuonTrackIndex", \
-                         "MuonTrackM", \
-                         "MuonTrackPhi", \
-                         "MuonTrackPt", \
-                         "MuonTrackQOverP", \
-                         "MuonTrackRapidity", \
-                         "MuonTrackTheta", \
-                         "MuonTrackVZ", \
-                         "MuonTrackZ0", \
-                         "EleCharge", \
-                         "EleE", \
-                         "EleEta", \
-                         "EleIndex", \
-                         "EleM", \
-                         "EleNClusters", \
-                         "EleNTrack", \
-                         "ElePhi", \
-                         "ElePt", \
-                         "EleRapidity", \
-                         "GSFCharge", \
-                         "GSFD0", \
-                         "GSFE", \
-                         "GSFEta", \
-                         "GSFIndex", \
-                         "GSFM", \
-                         "GSFPhi", \
-                         "GSFPt", \
-                         "GSFQOverP", \
-                         "GSFRapidity", \
-                         "GSFTheta", \
-                         "GSFVZ", \
-                         "GSFZ0", \
-                         "MuonCharge", \
-                         "MuonE", \
-                         "MuonEta", \
-                         "MuonIndex", \
-                         "MuonM", \
-                         "MuonN", \
-                         "MuonPhi", \
-                         "MuonPt", \
-                         "MuonQuality", \
-                         "MuonRapidity", \
-                         "PhotonRadius", \
-                         "PhotonE", \
-                         "PhotonEta", \
-                         "PhotonIndex", \
-                         "PhotonM", \
-                         "PhotonNClusters", \
-                         "PhotonNVertices", \
-                         "PhotonPhi", \
-                         "PhotonPt", \
-                         "PhotonRapidity")) \
-        .value()
+                             ls[9].Select(lambda ptn: ptn.rapidity()))')
+                 .AsAwkwardArray((["JetE",
+                                   "JetEta",
+                                   "JetIndex",
+                                   "JetM",
+                                   "JetPhi",
+                                   "JetPt",
+                                   "JetPx",
+                                   "JetPy",
+                                   "JetPz",
+                                   "JetRapidity",
+                                   "TrackE",
+                                   "TrackEta",
+                                   "TrackIndex",
+                                   "TrackM",
+                                   "TrackPhi",
+                                   "TrackPt",
+                                   "TrackPx",
+                                   "TrackPy",
+                                   "TrackPz",
+                                   "TrackRapidity",
+                                   "BTopoIndex",
+                                   "BTopo2DTrack",
+                                   "BTopo3DTrack",
+                                   "BTopoSV0",
+                                   "BTopoSV1",
+                                   "BTrackIndex",
+                                   "BTrack2DTrack",
+                                   "BTrack3DTrack",
+                                   "BTrackSV0",
+                                   "BTrackSV1",
+                                   "ClustersCalE",
+                                   "ClustersCalEta",
+                                   "ClustersCalM",
+                                   "ClustersCalPhi",
+                                   "ClustersE",
+                                   "ClustersEta",
+                                   "ClustersIndex",
+                                   "ClustersM",
+                                   "ClustersNSamples",
+                                   "ClustersPhi",
+                                   "ClustersRapidity",
+                                   "ClustersRawE",
+                                   "ClustersRawEta",
+                                   "ClustersRawM",
+                                   "ClustersRawPhi",
+                                   "MuonTrackCharge",
+                                   "MuonTrackD0",
+                                   "MuonTrackE",
+                                   "MuonTrackEta",
+                                   "MuonTrackIndex",
+                                   "MuonTrackM",
+                                   "MuonTrackPhi",
+                                   "MuonTrackPt",
+                                   "MuonTrackQOverP",
+                                   "MuonTrackRapidity",
+                                   "MuonTrackTheta",
+                                   "MuonTrackVZ",
+                                   "MuonTrackZ0",
+                                   "EleCharge",
+                                   "EleE",
+                                   "EleEta",
+                                   "EleIndex",
+                                   "EleM",
+                                   "EleNClusters",
+                                   "EleNTrack",
+                                   "ElePhi",
+                                   "ElePt",
+                                   "EleRapidity",
+                                   "GSFCharge",
+                                   "GSFD0",
+                                   "GSFE",
+                                   "GSFEta",
+                                   "GSFIndex",
+                                   "GSFM",
+                                   "GSFPhi",
+                                   "GSFPt",
+                                   "GSFQOverP",
+                                   "GSFRapidity",
+                                   "GSFTheta",
+                                   "GSFVZ",
+                                   "GSFZ0",
+                                   "MuonCharge",
+                                   "MuonE",
+                                   "MuonEta",
+                                   "MuonIndex",
+                                   "MuonM",
+                                   "MuonN",
+                                   "MuonPhi",
+                                   "MuonPt",
+                                   "MuonQuality",
+                                   "MuonRapidity",
+                                   "PhotonRadius",
+                                   "PhotonE",
+                                   "PhotonEta",
+                                   "PhotonIndex",
+                                   "PhotonM",
+                                   "PhotonNClusters",
+                                   "PhotonNVertices",
+                                   "PhotonPhi",
+                                   "PhotonPt",
+                                   "PhotonRapidity"]))
+                 .value())
 
-    retrieved_data = query[b'JetPt'] # store the JetPts as a list
+    retrieved_data = query[b'JetPt']  # store the JetPts as a list
 
-    assert len(retrieved_data) == 5000 # did we retrieve the correct number of JetPts?
+    assert len(retrieved_data) == 5000  # did we retrieve the correct number of JetPts?
 	
 # This test retrieves 20 columns from 10 datasets at the same time. This takes a lot of memory!
 @pytest.mark.asyncio
-@pytest.mark.stress
+@pytest.mark.stress2
 async def test_multiple_requests():
     dataset = [ServiceXDataset('mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_SUSY18.e3649_e5984_s3126_r10201_r10210_p3840_tid18281770_00'), \

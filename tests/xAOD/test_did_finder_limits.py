@@ -26,16 +26,36 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from func_adl_servicex import ServiceXSourceXAOD
-from servicex import ignore_cache
+from servicex import ignore_cache, ServiceXDataset
 
 
-def test_did_finder_limits(endpoint_xaod):
+def test_did_finder_limits(endpoint_xaod, xaod_did):
     with ignore_cache():
-        query = (ServiceXSourceXAOD("mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00?files=2", backend=endpoint_xaod)
-                 .SelectMany('lambda e: (e.Jets("AntiKt4EMTopoJets"))')
-                 .Where('lambda j: (j.pt()/1000)>30')
-                 .Select('lambda j: (j.pt())')
-                 .AsRoot("JetPt")
-                 .value(title="Test DID Finder Limits"))
+        sx = ServiceXDataset(f"{xaod_did}?files=2",
+                             backend_name=endpoint_xaod,
+                             status_callback_factory=None)
 
-        print(query)
+        resulting_files = (
+            ServiceXSourceXAOD(sx)
+            .SelectMany('lambda e: (e.Jets("AntiKt4EMTopoJets"))')
+            .Where('lambda j: (j.pt()/1000)>30')
+            .Select('lambda j: (j.pt())')
+            .AsROOTTTree(filename="test_result", treename="JetPt", columns=["jetPT"])
+            .value(title="Test DID Finder Limits"))
+        assert len(resulting_files) == 2
+
+
+def test_did_finder_no_limits(endpoint_xaod, xaod_did):
+    with ignore_cache():
+        sx = ServiceXDataset(xaod_did,
+                             backend_name=endpoint_xaod,
+                             status_callback_factory=None)
+
+        resulting_files = (
+            ServiceXSourceXAOD(sx)
+            .SelectMany('lambda e: (e.Jets("AntiKt4EMTopoJets"))')
+            .Where('lambda j: (j.pt()/1000)>30')
+            .Select('lambda j: (j.pt())')
+            .AsROOTTTree(filename="test_result", treename="JetPt", columns=["jetPT"])
+            .value(title="Test DID Finder No Limits"))
+        assert len(resulting_files) == 17
