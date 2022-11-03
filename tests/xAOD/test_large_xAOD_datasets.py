@@ -4,14 +4,8 @@
 # 20 July 2020
 
 import asyncio
-# import servicex
 from servicex import ServiceXDataset, ignore_cache
-# from servicex.minio_adaptor import MinioAdaptor
-# from servicex.servicex_adaptor import ServiceXAdaptor
 from func_adl_servicex import ServiceXSourceXAOD
-# from numpy import genfromtxt
-# import numpy as np
-# import time
 import pytest
 
 # pytestmark = run_stress_tests # stress tests take upwards of 40 minutes to complete, so we don't do them unless we want to.
@@ -25,9 +19,15 @@ def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
         sx = ServiceXDataset(large_xaod_did,
                              backend_name=endpoint_xaod,
                              status_callback_factory=None)
-        query = (
-            ServiceXSourceXAOD(sx).Select('lambda e: e.Jets("AntiKt4EMTopoJets")').Select('lambda jets: jets.Where(lambda j: (j.pt()/1000)>494)').Select('lambda good_jets: good_jets.Select(lambda j: j.pt()/100.0)').AsROOTTTree('junk.root',
-                                                                                                                                                                                                                                   'my_tree', ['JetPt']).value(title="Test 10TB"))
+
+        query = ServiceXSourceXAOD(sx). \
+            Select('lambda e: e.Jets("AntiKt4EMTopoJets")'). \
+            Select('lambda jets: jets.Where(lambda j: (j.pt()/1000)>494)'). \
+            Select('lambda good_jets: good_jets.Select(lambda j: j.pt()/100.0)'). \
+            AsAwkwardArray((["JetPt"])). \
+            value(title="Test 10TB")
+
+        # AsROOTTTree('junk.root', 'my_tree', ['JetPt']).
 
         # .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), \
         #                 e.Tracks("AntiKt4PV0TrackJets"), \
@@ -243,8 +243,6 @@ def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
         #                    "PhotonPhi",
         #                    "PhotonPt",
         #                    "PhotonRapidity"]))
-
-        #  .AsROOTTTree(filename="test_result", treename="JetPt", columns=["jetPT"])
         #  .value(title="Test 10TB"))
 
     retrieved_data = query[b'JetPt']  # store the JetPts as a list
@@ -256,26 +254,16 @@ def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
 
 @ pytest.mark.asyncio
 @ pytest.mark.stress
-async def test_multiple_requests():
-    dataset = [ServiceXDataset('mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00'),
-               ServiceXDataset(
-        'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r10724_r10726_p4180_tid21859882_00'),
-        ServiceXDataset(
-        'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r10724_r10726_p4180_tid21859885_00'),
-        ServiceXDataset(
-        'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r9364_r9315_p4180_tid21859934_00'),
-        ServiceXDataset(
-        'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_s3126_r10201_r10210_p4180_tid21860366_00'),
-        ServiceXDataset(
-        'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT12.e3649_e5984_s3126_r10724_r10726_p3978_tid19368338_00'),
-        ServiceXDataset(
-        'data18_13TeV:data18_13TeV.periodO.physics_Main.PhysCont.DAOD_PHYS.grp18_v01_p5002')
-    ]
+async def test_multiple_requests(endpoint_xaod):
 
     async def fetch_data(dataset):
-        query = ServiceXDatasetSource(dataset) \
-            .Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), e.Electrons("Electrons"))') \
-            .Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
+
+        sx = ServiceXDataset(dataset,
+                             backend_name=endpoint_xaod,
+                             status_callback_factory=None)
+        query = ServiceXSourceXAOD(sx). \
+            Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), e.Electrons("Electrons"))'). \
+            Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
                                  ls[0].Select(lambda jet: jet.eta()), \
                                  ls[0].Select(lambda jet: jet.index()), \
                                  ls[0].Select(lambda jet: jet.m()), \
@@ -294,34 +282,42 @@ async def test_multiple_requests():
                                  ls[1].Select(lambda ele: ele.nTrackParticles()), \
                                  ls[1].Select(lambda ele: ele.phi()), \
                                  ls[1].Select(lambda ele: ele.pt()), \
-                                 ls[1].Select(lambda ele: ele.rapidity()))') \
-            .AsAwkwardArray(("JetE",
-                             "JetEta",
-                             "JetIndex",
-                             "JetM",
-                             "JetPhi",
-                             "JetPt",
-                             "JetPx",
-                             "JetPy",
-                             "JetPz",
-                             "JetRapidity",
-                             "EleCharge",
-                             "EleE",
-                             "EleEta",
-                             "EleIndex",
-                             "EleM",
-                             "EleNClusters",
-                             "EleNTrack",
-                             "ElePhi",
-                             "ElePt",
-                             "EleRapidity")) \
-            .value_async()
+                                 ls[1].Select(lambda ele: ele.rapidity()))'). \
+            AsAwkwardArray(("JetE",
+                            "JetEta",
+                            "JetIndex",
+                            "JetM",
+                            "JetPhi",
+                            "JetPt",
+                            "JetPx",
+                            "JetPy",
+                            "JetPz",
+                            "JetRapidity",
+                            "EleCharge",
+                            "EleE",
+                            "EleEta",
+                            "EleIndex",
+                            "EleM",
+                            "EleNClusters",
+                            "EleNTrack",
+                            "ElePhi",
+                            "ElePt",
+                            "EleRapidity")). \
+            value_async()
 
         return await query
 
+    datasets = ['mc15_13TeV:mc15_13TeV.361106.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zee.merge.DAOD_STDM3.e3601_s2576_s2132_r6630_r6264_p2363_tid05630052_00',
+                'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r10724_r10726_p4180_tid21859882_00',
+                'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r10724_r10726_p4180_tid21859885_00',
+                'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r9364_r9315_p4180_tid21859934_00',
+                'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_s3126_r10201_r10210_p4180_tid21860366_00',
+                'mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT12.e3649_e5984_s3126_r10724_r10726_p3978_tid19368338_00',
+                'data18_13TeV:data18_13TeV.periodO.physics_Main.PhysCont.DAOD_PHYS.grp18_v01_p5002'
+                ]
     data_list = []
     for i in range(7):
-        data_slot = fetch_data(dataset[i])
+        data_slot = fetch_data(datasets[i])
         data_list.append(data_slot)
 
     ds0, ds1, ds2, ds3, ds4, ds5, ds6, = await asyncio.gather(data_list[0],
@@ -337,5 +333,5 @@ async def test_multiple_requests():
         len(ds4[b'JetPt']) + len(ds5[b'JetPt']) + \
         len(ds6[b'JetPt'])
 
-# did we pull the correct amount of data from all 10 datasets?
+    # did we pull the correct amount of data from all 10 datasets?
     assert total_length == 10264173
