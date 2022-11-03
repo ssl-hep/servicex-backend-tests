@@ -4,14 +4,14 @@
 # 20 July 2020
 
 import asyncio
-import servicex
+# import servicex
 from servicex import ServiceXDataset, ignore_cache
-from servicex.minio_adaptor import MinioAdaptor
-from servicex.servicex_adaptor import ServiceXAdaptor
+# from servicex.minio_adaptor import MinioAdaptor
+# from servicex.servicex_adaptor import ServiceXAdaptor
 from func_adl_servicex import ServiceXSourceXAOD
-from numpy import genfromtxt
-import numpy as np
-import time
+# from numpy import genfromtxt
+# import numpy as np
+# import time
 import pytest
 
 # pytestmark = run_stress_tests # stress tests take upwards of 40 minutes to complete, so we don't do them unless we want to.
@@ -238,7 +238,7 @@ def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
                                    "PhotonPhi",
                                    "PhotonPt",
                                    "PhotonRapidity"]))
-                 .value())
+                 .value(title="Test 10TB"))
 
     retrieved_data = query[b'JetPt']  # store the JetPts as a list
 

@@ -3,6 +3,7 @@
 import logging
 import pytest
 
+
 def pytest_addoption(parser):
     parser.addoption(
         "--stress", action="store_true", default=False, help="Run stress tests."
@@ -52,7 +53,7 @@ def xaod_did():
 
 @pytest.fixture
 def large_xaod_did():
-    return 'data16_13TeV:data16_13TeV.AllYear.physics_Main.PhysCont.DAOD_TOPQ5.grp16_v01_p4173'
+    return 'data18_13TeV:data18_13TeV.periodO.physics_Main.PhysCont.DAOD_PHYS.grp18_v01_p5002'
 
 
 @pytest.fixture(autouse=True)
