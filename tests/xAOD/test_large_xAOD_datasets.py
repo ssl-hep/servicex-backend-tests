@@ -257,6 +257,7 @@ async def test_multiple_requests():
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_e5984_s3126_r9364_r9315_p4180_tid21859934_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT0.e3649_s3126_r10201_r10210_p4180_tid21860366_00'), \
                ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT12.e3649_e5984_s3126_r10724_r10726_p3978_tid19368338_00'), \
+               ServiceXDataset('data18_13TeV:data18_13TeV.periodO.physics_Main.PhysCont.DAOD_PHYS.grp18_v01_p5002') \
                #    ServiceXDataset('mc16_13TeV:mc16_13TeV.301001.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_180M250.deriv.DAOD_EXOT19.e3649_e5984_s3126_r10724_r10726_p3978_tid19509568_00'), \
                #    ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT12.e3649_e5984_s3126_r9364_r9315_p3978_tid19370588_00'), \
                #    ServiceXDataset('mc16_13TeV:mc16_13TeV.301000.PowhegPythia8EvtGen_AZNLOCTEQ6L1_DYee_120M180.deriv.DAOD_EXOT19.e3649_e5984_s3126_r10724_r10726_p3978_tid19511379_00') \
