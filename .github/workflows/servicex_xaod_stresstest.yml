@@ -31,4 +31,4 @@ jobs:
         env:
           TOKEN: ${{ secrets.SECRET_TESTING2_XAOD_TOKEN }}
         run: |
-          source test_stress_xaod.sh $TOKEN https://servicex-release-int-xaod.servicex.ssl-hep.org
+          source test_xaod.sh $TOKEN https://servicex-release-int-xaod.servicex.ssl-hep.org
