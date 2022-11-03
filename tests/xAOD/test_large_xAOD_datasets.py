@@ -313,26 +313,22 @@ async def test_multiple_requests():
         return await query
 
     data_list = []
-    for i in range(10):
+    for i in range(7):
         data_slot = fetch_data(dataset[i])
         data_list.append(data_slot)
 
-    ds0, ds1, ds2, ds3, ds4, ds5, ds6, ds7, ds8, ds9 = await asyncio.gather(data_list[0],
-                                                                            data_list[1],
-                                                                            data_list[2],
-                                                                            data_list[3],
-                                                                            data_list[4],
-                                                                            data_list[5],
-                                                                            data_list[6],
-                                                                            data_list[7],
-                                                                            data_list[8],
-                                                                            data_list[9])
+    ds0, ds1, ds2, ds3, ds4, ds5, ds6, = await asyncio.gather(data_list[0],
+                                                              data_list[1],
+                                                              data_list[2],
+                                                              data_list[3],
+                                                              data_list[4],
+                                                              data_list[5],
+                                                              data_list[6])
 
     total_length = len(ds0[b'JetPt']) + len(ds1[b'JetPt']) + \
         len(ds2[b'JetPt']) + len(ds3[b'JetPt']) + \
         len(ds4[b'JetPt']) + len(ds5[b'JetPt']) + \
-        len(ds6[b'JetPt']) + len(ds7[b'JetPt']) + \
-        len(ds8[b'JetPt']) + len(ds9[b'JetPt'])
+        len(ds6[b'JetPt'])
 
 # did we pull the correct amount of data from all 10 datasets?
     assert total_length == 10264173
