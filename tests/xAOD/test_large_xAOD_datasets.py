@@ -21,10 +21,27 @@ def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
                              status_callback_factory=None)
 
         query = ServiceXSourceXAOD(sx). \
-            Select('lambda e: e.Jets("AntiKt4EMTopoJets")'). \
-            Select('lambda jets: jets.Where(lambda j: (j.pt()/1000)>494)'). \
+            Select('lambda e: ( \
+                e.Jets("AntiKt4EMTopoJets"), \
+                e.Tracks("AntiKt4PV0TrackJets"), \
+                e.Clusters("CaloCalTopoClusters"), \
+                e.Muons("Muons"), \
+                e.Photons("Photons") \
+                )'). \
+            Select('lambda jets: jets.Where(lambda j: j.pt()>494)'). \
             Select('lambda good_jets: good_jets.Select(lambda j: j.pt()/100.0)'). \
-            AsAwkwardArray((["JetPt"])). \
+            Select('lambda ls: ( \
+                ls[0].Select(lambda jet: jet.e()), \
+                ls[0].Select(lambda jet: jet.eta()), \
+                ls[0].Select(lambda jet: jet.index()), \
+                ls[0].Select(lambda jet: jet.m()), \
+                ls[0].Select(lambda jet: jet.phi()), \
+                ls[0].Select(lambda jet: jet.pt().Where(lambda jet: jet.pt()/1000 > 60)), \
+                ls[0].Select(lambda jet: jet.px()), \
+                ls[0].Select(lambda jet: jet.py()), \
+                ls[0].Select(lambda jet: jet.pz()), \
+                ls[0].Select(lambda jet: jet.rapidity()))'). \
+            AsAwkwardArray((["JetE", "JetEta", "JetIndex", "JetM", "JetPhi", "JetPt", "JetPx", "JetPy", "JetPz", "JetRapidity"])). \
             value(title="Test 10TB")
 
         # AsROOTTTree('junk.root', 'my_tree', ['JetPt']).
@@ -40,7 +57,6 @@ def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
         #                 e.Muons("Muons"), \
         #                 e.Photons("Photons"))')
         # .AsROOTTTree(filename="test_result", treename="JetPt", columns=["jetPT"])
-        # .value(title="Test 10TB"))
         #  .Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
         #              ls[0].Select(lambda jet: jet.eta()), \
         #              ls[0].Select(lambda jet: jet.index()), \
@@ -249,9 +265,8 @@ def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
 
     assert len(retrieved_data) == 5000  # did we retrieve the correct number of JetPts?
 
-# This test retrieves 20 columns from 10 datasets at the same time. This takes a lot of memory!
 
-
+# This test retrieves 20 columns from 7 datasets at the same time. This takes a lot of memory!
 @ pytest.mark.asyncio
 @ pytest.mark.stress
 async def test_multiple_requests(endpoint_xaod):
@@ -261,6 +276,7 @@ async def test_multiple_requests(endpoint_xaod):
         sx = ServiceXDataset(dataset,
                              backend_name=endpoint_xaod,
                              status_callback_factory=None)
+
         query = ServiceXSourceXAOD(sx). \
             Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), e.Electrons("Electrons"))'). \
             Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
@@ -283,27 +299,27 @@ async def test_multiple_requests(endpoint_xaod):
                                  ls[1].Select(lambda ele: ele.phi()), \
                                  ls[1].Select(lambda ele: ele.pt()), \
                                  ls[1].Select(lambda ele: ele.rapidity()))'). \
-            AsAwkwardArray(("JetE",
+            AsAwkwardArray((["JetE",
                             "JetEta",
-                            "JetIndex",
-                            "JetM",
-                            "JetPhi",
-                            "JetPt",
-                            "JetPx",
-                            "JetPy",
-                            "JetPz",
-                            "JetRapidity",
-                            "EleCharge",
-                            "EleE",
-                            "EleEta",
-                            "EleIndex",
-                            "EleM",
-                            "EleNClusters",
-                            "EleNTrack",
-                            "ElePhi",
-                            "ElePt",
-                            "EleRapidity")). \
-            value_async()
+                             "JetIndex",
+                             "JetM",
+                             "JetPhi",
+                             "JetPt",
+                             "JetPx",
+                             "JetPy",
+                             "JetPz",
+                             "JetRapidity",
+                             "EleCharge",
+                             "EleE",
+                             "EleEta",
+                             "EleIndex",
+                             "EleM",
+                             "EleNClusters",
+                             "EleNTrack",
+                             "ElePhi",
+                             "ElePt",
+                             "EleRapidity"])). \
+            value_async(title="7 request test")
 
         return await query
 
@@ -333,5 +349,5 @@ async def test_multiple_requests(endpoint_xaod):
         len(ds4[b'JetPt']) + len(ds5[b'JetPt']) + \
         len(ds6[b'JetPt'])
 
-    # did we pull the correct amount of data from all 10 datasets?
+    # did we pull the correct amount of data from all datasets?
     assert total_length == 10264173
