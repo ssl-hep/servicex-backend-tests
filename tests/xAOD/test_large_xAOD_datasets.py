@@ -30,19 +30,22 @@ def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
                 )'). \
             Select('lambda jets: jets.Where(lambda j: j.pt()>494)'). \
             Select('lambda good_jets: good_jets.Select(lambda j: j.pt()/100.0)'). \
-            Select('lambda ls: ( \
-                ls[0].Select(lambda jet: jet.e()), \
-                ls[0].Select(lambda jet: jet.eta()), \
-                ls[0].Select(lambda jet: jet.index()), \
-                ls[0].Select(lambda jet: jet.m()), \
-                ls[0].Select(lambda jet: jet.phi()), \
-                ls[0].Select(lambda jet: jet.pt().Where(lambda jet: jet.pt()/1000 > 60)), \
-                ls[0].Select(lambda jet: jet.px()), \
-                ls[0].Select(lambda jet: jet.py()), \
-                ls[0].Select(lambda jet: jet.pz()), \
-                ls[0].Select(lambda jet: jet.rapidity()))'). \
-            AsAwkwardArray((["JetE", "JetEta", "JetIndex", "JetM", "JetPhi", "JetPt", "JetPx", "JetPy", "JetPz", "JetRapidity"])). \
+            AsAwkwardArray((["JetPt"])). \
             value(title="Test 10TB")
+
+# AsAwkwardArray((["JetE", "JetEta", "JetIndex", "JetM", "JetPhi", "JetPt", "JetPx", "JetPy", "JetPz", "JetRapidity"])). \
+
+        # Select('lambda ls: ( \
+        #     ls[0].Select(lambda jet: jet.e()), \
+        #     ls[0].Select(lambda jet: jet.eta()), \
+        #     ls[0].Select(lambda jet: jet.index()), \
+        #     ls[0].Select(lambda jet: jet.m()), \
+        #     ls[0].Select(lambda jet: jet.phi()), \
+        #     ls[0].Select(lambda jet: jet.pt().Where(lambda jet: jet.pt()/1000 > 60)), \
+        #     ls[0].Select(lambda jet: jet.px()), \
+        #     ls[0].Select(lambda jet: jet.py()), \
+        #     ls[0].Select(lambda jet: jet.pz()), \
+        #     ls[0].Select(lambda jet: jet.rapidity()))'). \
 
         # AsROOTTTree('junk.root', 'my_tree', ['JetPt']).
 
@@ -279,46 +282,7 @@ async def test_multiple_requests(endpoint_xaod):
 
         query = ServiceXSourceXAOD(sx). \
             Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), e.Electrons("Electrons"))'). \
-            Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
-                                 ls[0].Select(lambda jet: jet.eta()), \
-                                 ls[0].Select(lambda jet: jet.index()), \
-                                 ls[0].Select(lambda jet: jet.m()), \
-                                 ls[0].Select(lambda jet: jet.phi()), \
-                                 ls[0].Select(lambda jet: jet.pt()), \
-                                 ls[0].Select(lambda jet: jet.px()), \
-                                 ls[0].Select(lambda jet: jet.py()), \
-                                 ls[0].Select(lambda jet: jet.pz()), \
-                                 ls[0].Select(lambda jet: jet.rapidity()), \
-                                 ls[1].Select(lambda ele: ele.charge()), \
-                                 ls[1].Select(lambda ele: ele.e()), \
-                                 ls[1].Select(lambda ele: ele.eta()), \
-                                 ls[1].Select(lambda ele: ele.index()), \
-                                 ls[1].Select(lambda ele: ele.m()), \
-                                 ls[1].Select(lambda ele: ele.nCaloClusters()), \
-                                 ls[1].Select(lambda ele: ele.nTrackParticles()), \
-                                 ls[1].Select(lambda ele: ele.phi()), \
-                                 ls[1].Select(lambda ele: ele.pt()), \
-                                 ls[1].Select(lambda ele: ele.rapidity()))'). \
-            AsAwkwardArray((["JetE",
-                            "JetEta",
-                             "JetIndex",
-                             "JetM",
-                             "JetPhi",
-                             "JetPt",
-                             "JetPx",
-                             "JetPy",
-                             "JetPz",
-                             "JetRapidity",
-                             "EleCharge",
-                             "EleE",
-                             "EleEta",
-                             "EleIndex",
-                             "EleM",
-                             "EleNClusters",
-                             "EleNTrack",
-                             "ElePhi",
-                             "ElePt",
-                             "EleRapidity"])). \
+            AsAwkwardArray((["JetPt"])). \
             value_async(title="7 request test")
 
         return await query
@@ -351,3 +315,45 @@ async def test_multiple_requests(endpoint_xaod):
 
     # did we pull the correct amount of data from all datasets?
     assert total_length == 10264173
+
+    # Select('lambda ls: (ls[0].Select(lambda jet: jet.e()), \
+    #                      ls[0].Select(lambda jet: jet.eta()), \
+    #                      ls[0].Select(lambda jet: jet.index()), \
+    #                      ls[0].Select(lambda jet: jet.m()), \
+    #                      ls[0].Select(lambda jet: jet.phi()), \
+    #                      ls[0].Select(lambda jet: jet.pt()), \
+    #                      ls[0].Select(lambda jet: jet.px()), \
+    #                      ls[0].Select(lambda jet: jet.py()), \
+    #                      ls[0].Select(lambda jet: jet.pz()), \
+    #                      ls[0].Select(lambda jet: jet.rapidity()), \
+    #                      ls[1].Select(lambda ele: ele.charge()), \
+    #                      ls[1].Select(lambda ele: ele.e()), \
+    #                      ls[1].Select(lambda ele: ele.eta()), \
+    #                      ls[1].Select(lambda ele: ele.index()), \
+    #                      ls[1].Select(lambda ele: ele.m()), \
+    #                      ls[1].Select(lambda ele: ele.nCaloClusters()), \
+    #                      ls[1].Select(lambda ele: ele.nTrackParticles()), \
+    #                      ls[1].Select(lambda ele: ele.phi()), \
+    #                      ls[1].Select(lambda ele: ele.pt()), \
+    #                      ls[1].Select(lambda ele: ele.rapidity()))'). \
+
+    # AsAwkwardArray((["JetE",
+    #     "JetEta",
+    #      "JetIndex",
+    #      "JetM",
+    #      "JetPhi",
+    #      "JetPt",
+    #      "JetPx",
+    #      "JetPy",
+    #      "JetPz",
+    #      "JetRapidity",
+    #      "EleCharge",
+    #      "EleE",
+    #      "EleEta",
+    #      "EleIndex",
+    #      "EleM",
+    #      "EleNClusters",
+    #      "EleNTrack",
+    #      "ElePhi",
+    #      "ElePt",
+    #      "EleRapidity"])). \
