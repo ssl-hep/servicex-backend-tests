@@ -21,14 +21,8 @@ def test_servicex_10TB_capacity(endpoint_xaod, large_xaod_did):
                              status_callback_factory=None)
 
         query = ServiceXSourceXAOD(sx). \
-            Select('lambda e: ( \
-                e.Jets("AntiKt4EMTopoJets"), \
-                e.Tracks("AntiKt4PV0TrackJets"), \
-                e.Clusters("CaloCalTopoClusters"), \
-                e.Muons("Muons"), \
-                e.Photons("Photons") \
-                )'). \
-            Select('lambda jets: jets.Where(lambda j: j.pt()>494)'). \
+            Select('lambda e: ( e.Jets("AntiKt4EMTopoJets")  )'). \
+            Select('lambda jets: jets.Where(lambda j: j.pt()>494 )'). \
             Select('lambda good_jets: good_jets.Select(lambda j: j.pt()/100.0)'). \
             AsAwkwardArray((["JetPt"])). \
             value(title="Test 10TB")
@@ -282,6 +276,7 @@ async def test_multiple_requests(endpoint_xaod):
 
         query = ServiceXSourceXAOD(sx). \
             Select('lambda e: (e.Jets("AntiKt4EMTopoJets"), e.Electrons("Electrons"))'). \
+            Select('lambda jets: jets.Where(lambda j: j.pt()>494 )'). \
             AsAwkwardArray((["JetPt"])). \
             value_async(title="7 request test")
 
