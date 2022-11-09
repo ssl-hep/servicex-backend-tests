@@ -32,3 +32,17 @@ jobs:
           TOKEN: ${{ secrets.SECRET_AF_UPROOT_TOKEN }}
         run: |
           source test_uproot.sh $TOKEN https://uproot-atlas.servicex.af.uchicago.edu/
+    outputs:
+      job_name: ${{ github.job }}
+      run_id: ${{ github.run_id }}
+
+  call-slack-notify:
+    uses: ./.github/workflows/slack_notify.yml
+    if: always()
+    needs: [ build ]
+    secrets: inherit
+    with:
+      result: ${{ needs.build.result }}
+      job_name: ${{ needs.build.outputs.job_name }}
+      run_id: ${{ needs.build.outputs.run_id }}
+      slack_message_title: 'Daily Automated Tests - Uproot AF Testing'

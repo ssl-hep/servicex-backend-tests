@@ -34,3 +34,17 @@ jobs:
           TOKEN: ${{ secrets.SECRET_TESTING1_UPROOT_TOKEN }}
         run: |
           source test_uproot.sh $TOKEN https://servicex-release-int-uproot.servicex.ssl-hep.org
+    outputs:
+      job_name: ${{ github.job }}
+      run_id: ${{ github.run_id }}
+
+  call-slack-notify:
+    uses: ./.github/workflows/slack_notify.yml
+    if: always()
+    needs: [ run-tests ]
+    secrets: inherit
+    with:
+      result: ${{ needs.run-tests.result }}
+      job_name: ${{ needs.run-tests.outputs.job_name }}
+      run_id: ${{ needs.run-tests.outputs.run_id }}
+      slack_message_title: 'Daily Automated Tests - Uproot River Testing'
