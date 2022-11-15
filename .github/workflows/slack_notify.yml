@@ -1,0 +1,37 @@
+
+name: Slack Notify
+
+on:
+  workflow_call:
+    inputs:
+      result:
+        required: true
+        type: string
+      job_name:
+        required: true
+        type: string
+      run_id:
+        required: true
+        type: string
+      slack_message_title:
+        required: true
+        type: string
+
+jobs:
+  slack-notify:
+    if: always()
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: python -m pip install -U requests
+      - name: notify slack
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL: '#servicex-github'
+          SLACK_MESSAGE_TITLE: ${{ inputs.slack_message_title }}
+          SLACK_FAILURE_MESSAGE: 'Daily run failed'
+        run: python ./.github/slack-notify.py ${{ inputs.result }} ${{ inputs.job_name }} ${{ inputs.run_id }}
+
