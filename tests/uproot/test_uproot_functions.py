@@ -18,6 +18,7 @@ def test_retrieve_simple_jet_pts_uproot(endpoint_uproot, uproot_single_file):
     with ignore_cache():
         sx = ServiceXDataset([uproot_single_file],
                              backend_name=endpoint_uproot,
+                             codegen="uproot",
                              status_callback_factory=None)
         src = ServiceXSourceUpROOT(sx, 'mini')
         r = src.Select(lambda e: {'lep_pt': e['lep_pt']}).AsAwkwardArray().value()
