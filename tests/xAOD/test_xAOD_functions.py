@@ -8,10 +8,11 @@ from func_adl_servicex import ServiceXSourceXAOD
 from numpy import genfromtxt
 
 
-def test_func_adl_simple_jet_pts(endpoint_xaod, xaod_did):
+def test_func_adl_simple_jet_pts(endpoint_uproot, xaod_did):
     with ignore_cache():
         sx = ServiceXDataset(xaod_did,
-                             backend_name=endpoint_xaod,
+                             backend_name=endpoint_uproot,
+                             codegen="atlasr21",
                              status_callback_factory=None)
 
         query = (ServiceXSourceXAOD(sx)
@@ -27,28 +28,32 @@ def test_func_adl_simple_jet_pts(endpoint_xaod, xaod_did):
     assert retrieved_data.all() == correct_data.all()
 
 
-def test_get_attribute_float_data(endpoint_xaod, xaod_did):
+def test_get_attribute_float_data(endpoint_uproot, xaod_did):
     with ignore_cache():
         sx = ServiceXDataset(xaod_did,
-                             backend_name=endpoint_xaod,
+                             backend_name=endpoint_uproot,
+                             codegen="atlasr21",
+                             backend_type="xaod",
                              status_callback_factory=None)
 
         query = (ServiceXSourceXAOD(sx)
                  .SelectMany('lambda e: e.Jets("AntiKt4EMTopoJets")')
                  .Where('lambda j: j.pt()/1000 > 20 and abs(j.eta()/1000) < 4.5')
                  .Select('lambda j: j.getAttributeFloat("LArQuality")')
-                 .AsPandasDF("LArQuality")
+                 .AsROOTTTree("root.root", "LArQuality", "LArQ")
+                 # .AsAwkwardArray("LArQuality")
                  .value())
 
     assert len(query.LArQuality) == 3551964
 
 
 # test if lambda capture is working properly in func_adl
-def test_lambda_capture(endpoint_xaod, xaod_did):
+def test_lambda_capture(endpoint_uproot, xaod_did):
     def retrieve_jet_lambda(dataset):
         with ignore_cache():
             sx = ServiceXDataset(dataset,
-                                 backend_name=endpoint_xaod,
+                                 backend_name=endpoint_uproot,
+                                 codegen="atlasr21",
                                  status_callback_factory=None)
 
             jets = (ServiceXSourceXAOD(sx)
